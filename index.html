@@ -133,7 +133,6 @@
     </div>
 
     <script>
-        // CONFIGURATION SUPABASE (MISE A JOUR)
         const SB_URL = "https://pxyrfrgwvmyflrunpvhl.supabase.co"; 
         const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4eXJmcmd3dm15ZmxydW5wdmhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjg0NDcsImV4cCI6MjA5MTg0NDQ0N30.K6cs-mSRFmQg9gPzjU-GSarMDgAv2AbvBKJj4Nb8plI"; 
         const supabase = window.supabase.createClient(SB_URL, SB_KEY);
@@ -152,12 +151,10 @@
             await loadChannels(); 
             await loadMessages();
             
-            // Écoute en temps réel
+            // Temps réel
             supabase.channel('m').on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},p=>{
                 if(p.new.channel === activeChannel) renderMessage(p.new);
             }).subscribe();
-            
-            supabase.channel('c').on('postgres_changes',{event:'INSERT',schema:'public',table:'channels'},()=>loadChannels()).subscribe();
         }
 
         function updateUI() {
@@ -210,4 +207,38 @@
                 <div class="m-ava" style="background:${m.color}"></div>
                 <div class="m-content">
                     <div class="m-header"><span class="m-user">${m.username}</span><span class="m-time">${time}</span></div>
-                    <div
+                    <div class="m-text">${m.content}</div>
+                </div>`;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const inp = document.getElementById('main-input');
+            const val = inp.value.trim();
+            if(!val) return;
+            inp.value = "";
+            await supabase.from('messages').insert([
+                { username: user.name, content: val, color: user.color, channel: activeChannel }
+            ]);
+        }
+
+        function openSettings() { document.getElementById('modal-settings').style.display = "flex"; }
+        function closeSettings() { document.getElementById('modal-settings').style.display = "none"; }
+
+        function saveSettings() {
+            user.name = document.getElementById('set-name').value || user.name;
+            user.color = document.getElementById('set-color-ava').value;
+            user.banner = document.getElementById('set-color-ban').value;
+            localStorage.setItem('ln_name', user.name);
+            localStorage.setItem('ln_color', user.color);
+            localStorage.setItem('ln_banner', user.banner);
+            updateUI();
+            closeSettings();
+        }
+
+        document.getElementById('main-input').onkeydown = (e) => { if(e.key === 'Enter') sendMessage(); };
+        init();
+    </script>
+</body>
+</html>
