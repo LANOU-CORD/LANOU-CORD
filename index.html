@@ -22,7 +22,8 @@
 
         /* BARRE SERVEURS */
         .srv-nav { width: 72px; background: var(--sidebar); display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 10px; border-right: 1px solid #111; }
-        .srv-icon { width: 48px; height: 48px; background: #2b2d31; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; font-weight: 900; color: white; border: none; font-size: 18px; }
+        .srv-icon { width: 48px; height: 48px; background: #2b2d31; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; font-weight: 900; color: white; border: none; font-size: 18px; overflow: hidden; }
+        .srv-icon img { width: 100%; height: 100%; object-fit: cover; }
         .srv-icon:hover, .srv-icon.active { border-radius: 15px; background: var(--main); color: black; box-shadow: var(--laser); }
 
         /* SIDEBAR */
@@ -57,7 +58,7 @@
         .input-box { background: #383a40; border-radius: 8px; display: flex; align-items: center; padding: 11px 16px; gap: 15px; }
         #main-input { background: transparent; border: none; color: white; flex: 1; outline: none; font-size: 15px; }
 
-        /* PARAMETRES MODAL */
+        /* MODAL */
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
         .modal { background: #18191c; width: 480px; border-radius: 8px; overflow: hidden; }
         .m-banner { height: 100px; background: var(--main); position: relative; }
@@ -68,12 +69,16 @@
 
         .discord-btn { position: absolute; top: 10px; right: 20px; background: #5865F2; padding: 8px 15px; border-radius: 4px; color: white; text-decoration: none; font-weight: bold; font-size: 12px; transition: 0.3s; }
         .discord-btn:hover { background: #4752c4; box-shadow: 0 0 15px rgba(88, 101, 242, 0.5); }
+        
+        @keyframes msgIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
     <nav class="srv-nav">
-        <button class="srv-icon active">LS</button>
+        <button class="srv-icon active">
+            <img src="ton-logo.png" alt="LC" onerror="this.style.display='none'; this.parentElement.innerText='LC'">
+        </button>
         <div style="width:32px; height:2px; background:#333;"></div>
         <button class="srv-icon" style="color:#43b581;" onclick="createRoom()">+</button>
     </nav>
@@ -117,10 +122,9 @@
             <div class="m-banner" id="m-ban-prev"><div class="m-ava-big" id="m-ava-prev"></div></div>
             <div class="m-body">
                 <input type="text" id="set-name" placeholder="Pseudo...">
-                <textarea id="set-bio" rows="2" placeholder="Bio..."></textarea>
                 <div style="display:flex; gap:10px;">
-                    <input type="color" id="set-color-ava" title="Avatar">
-                    <input type="color" id="set-color-ban" title="Bannière">
+                    <input type="color" id="set-color-ava" title="Couleur Avatar">
+                    <input type="color" id="set-color-ban" title="Couleur Bannière">
                 </div>
                 <button class="btn-save" onclick="saveSettings()">ENREGISTRER</button>
                 <button onclick="closeSettings()" style="background:none; border:none; color:#888; width:100%; margin-top:10px; cursor:pointer;">Annuler</button>
@@ -129,8 +133,9 @@
     </div>
 
     <script>
+        // CONFIGURATION SUPABASE (MISE A JOUR)
         const SB_URL = "https://pxyrfrgwvmyflrunpvhl.supabase.co"; 
-        const SB_KEY = "sb_publishable_CpPI_nOBqa4suV84Tp8-Mg__o63xMsu"; 
+        const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4eXJmcmd3dm15ZmxydW5wdmhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjg0NDcsImV4cCI6MjA5MTg0NDQ0N30.K6cs-mSRFmQg9gPzjU-GSarMDgAv2AbvBKJj4Nb8plI"; 
         const supabase = window.supabase.createClient(SB_URL, SB_KEY);
 
         let user = {
@@ -142,9 +147,16 @@
         localStorage.setItem('ln_id', user.id);
         let activeChannel = "général";
 
-        function init() {
-            updateUI(); loadChannels(); loadMessages();
-            supabase.channel('m').on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},p=>{if(p.new.channel===activeChannel)renderMessage(p.new)}).subscribe();
+        async function init() {
+            updateUI(); 
+            await loadChannels(); 
+            await loadMessages();
+            
+            // Écoute en temps réel
+            supabase.channel('m').on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},p=>{
+                if(p.new.channel === activeChannel) renderMessage(p.new);
+            }).subscribe();
+            
             supabase.channel('c').on('postgres_changes',{event:'INSERT',schema:'public',table:'channels'},()=>loadChannels()).subscribe();
         }
 
@@ -154,19 +166,27 @@
             document.getElementById('my-ava').style.background = user.color;
             document.getElementById('m-ava-prev').style.background = user.color;
             document.getElementById('m-ban-prev').style.background = user.banner;
+            document.getElementById('set-name').value = user.name;
         }
 
         async function loadChannels() {
             const { data } = await supabase.from('channels').select('*');
             const list = document.getElementById('channels-list');
             list.innerHTML = "";
-            data?.forEach(c => {
-                const div = document.createElement('div');
-                div.className = `item ${activeChannel === c.name ? 'active' : ''}`;
-                div.innerHTML = `<span>#</span> ${c.name}`;
-                div.onclick = () => { activeChannel = c.name; document.getElementById('nav-title').innerText=c.name; loadChannels(); loadMessages(); };
-                list.appendChild(div);
-            });
+            if (data) {
+                data.forEach(c => {
+                    const div = document.createElement('div');
+                    div.className = `item ${activeChannel === c.name ? 'active' : ''}`;
+                    div.innerHTML = `<span>#</span> ${c.name}`;
+                    div.onclick = () => { 
+                        activeChannel = c.name; 
+                        document.getElementById('nav-title').innerText = c.name; 
+                        loadChannels(); 
+                        loadMessages(); 
+                    };
+                    list.appendChild(div);
+                });
+            }
         }
 
         async function createRoom() {
@@ -178,36 +198,16 @@
             const container = document.getElementById('messages-container');
             container.innerHTML = "";
             const { data } = await supabase.from('messages').select('*').eq('channel', activeChannel).order('created_at', {ascending: true});
-            data?.forEach(m => renderMessage(m));
+            if (data) data.forEach(m => renderMessage(m));
         }
 
         function renderMessage(m) {
             const container = document.getElementById('messages-container');
             const div = document.createElement('div');
             div.className = "message";
-            div.innerHTML = `<div class="m-ava" style="background:${m.color}"></div><div class="m-content"><div class="m-header"><span class="m-user">${m.username}</span><span class="m-time">${new Date(m.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span></div><div class="m-text">${m.content}</div></div>`;
-            container.appendChild(div); container.scrollTop = container.scrollHeight;
-        }
-
-        async function sendMessage() {
-            const inp = document.getElementById('main-input');
-            const val = inp.value.trim(); if(!val) return; inp.value = "";
-            await supabase.from('messages').insert([{ username:user.name, content:val, color:user.color, channel:activeChannel }]);
-        }
-
-        function openSettings() { document.getElementById('modal-settings').style.display="flex"; }
-        function closeSettings() { document.getElementById('modal-settings').style.display="none"; }
-        function saveSettings() {
-            user.name = document.getElementById('set-name').value;
-            user.color = document.getElementById('set-color-ava').value;
-            user.banner = document.getElementById('set-color-ban').value;
-            localStorage.setItem('ln_name', user.name); localStorage.setItem('ln_color', user.color); localStorage.setItem('ln_banner', user.banner);
-            updateUI(); closeSettings();
-        }
-
-        document.getElementById('main-input').onkeydown = (e) => { if(e.key === 'Enter') sendMessage(); };
-        init();
-    </script>
-</body>
-</html>
-<img src="ton-logo.png" style="width: 50px; height: 50px; border-radius: 50%;">
+            const time = new Date(m.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+            div.innerHTML = `
+                <div class="m-ava" style="background:${m.color}"></div>
+                <div class="m-content">
+                    <div class="m-header"><span class="m-user">${m.username}</span><span class="m-time">${time}</span></div>
+                    <div
