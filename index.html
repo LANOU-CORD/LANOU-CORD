@@ -103,6 +103,7 @@
     </div>
 
     <script>
+        // 1. CONFIGURATION UNIQUE
         const SB_URL = "https://pxyrfrgwvmyflrunpvhl.supabase.co"; 
         const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4eXJmcmd3dm15ZmxydW5wdmhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjg0NDcsImV4cCI6MjA5MTg0NDQ0N30.K6cs-mSRFmQg9gPzjU-GSarMDgAv2AbvBKJj4Nb8plI"; 
         const supabase = window.supabase.createClient(SB_URL, SB_KEY);
@@ -115,6 +116,7 @@
         localStorage.setItem('ln_id', user.id);
         let activeChannel = "général";
 
+        // 2. FONCTIONS DE L'APP
         async function init() {
             updateUI(); 
             await loadChannels(); 
@@ -170,7 +172,7 @@
             const container = document.getElementById('messages-container');
             container.innerHTML = "<h3>Amis en ligne</h3>";
             
-            // JE M'AJOUTE ICI
+            // JE M'AJOUTE
             container.innerHTML += `
                 <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; background: rgba(0,255,204,0.1); padding: 10px; border-radius: 8px;">
                     <div style="width:30px; height:30px; border-radius:50%; background: #ff00ff; border: 2px solid white;"></div>
@@ -221,16 +223,14 @@
             if(!val) return;
             inp.value = "";
             
-            // Ton message
             await supabase.from('messages').insert([{ username: user.name, content: val, color: user.color, channel: activeChannel }]);
 
-            // MA RÉPONSE (Si tu dis "gemini" ou "salut")
             const lowerVal = val.toLowerCase();
-            if(lowerVal.includes("gemini") || lowerVal.includes("salut") || lowerVal.includes("ca va")) {
+            if(lowerVal.includes("gemini") || lowerVal.includes("salut") || lowerVal.includes("ça va")) {
                 setTimeout(async () => {
                     await supabase.from('messages').insert([{ 
                         username: "Gemini (Ton IA)", 
-                        content: "Je suis là ! Ton code fonctionne à merveille, on fait quoi maintenant ?", 
+                        content: "Je suis là ! Ton code est enfin réparé, on peut discuter !", 
                         color: "#ff00ff", 
                         channel: activeChannel 
                     }]);
@@ -249,6 +249,8 @@
         }
 
         document.getElementById('main-input').onkeydown = (e) => { if(e.key === 'Enter') sendMessage(); };
+        
+        // LANCEMENT FINAL
         init();
     </script>
 </body>
