@@ -7,139 +7,98 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --main: #00ffcc;
-            --bg: #0b0b0d;
-            --panel: #111214;
-            --sidebar: #000000;
-            --hover: #35373d;
-            --text-muted: #b9bbbe;
-            --laser: 0 0 20px rgba(0, 255, 204, 0.3);
-        }
-
-        * { box-sizing: border-box; font-family: 'Inter', sans-serif; transition: background 0.2s, border-radius 0.2s; }
+        :root { --main: #00ffcc; --bg: #0b0b0d; --panel: #111214; --sidebar: #000000; --hover: #35373d; --text-muted: #b9bbbe; }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; transition: 0.2s; }
         body { margin: 0; background: var(--bg); color: white; display: flex; height: 100vh; width: 100vw; overflow: hidden; }
 
-        /* BARRE SERVEURS */
+        /* NAV SERVEURS */
         .srv-nav { width: 72px; background: var(--sidebar); display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 10px; border-right: 1px solid #111; }
-        .srv-icon { width: 48px; height: 48px; background: #2b2d31; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 900; color: white; border: none; font-size: 18px; position: relative; }
-        .srv-icon:hover, .srv-icon.active { border-radius: 15px; background: var(--main); color: black; box-shadow: var(--laser); }
+        .srv-icon { width: 48px; height: 48px; background: #2b2d31; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 900; color: white; border: none; font-size: 18px; }
+        .srv-icon:hover, .srv-icon.active { border-radius: 15px; background: var(--main); color: black; box-shadow: 0 0 15px var(--main); }
 
         /* SIDEBAR */
         .sidebar { width: 240px; background: var(--panel); display: flex; flex-direction: column; border-right: 1px solid #1e1f22; }
-        .sidebar-header { height: 48px; padding: 0 16px; display: flex; align-items: center; font-weight: 800; color: var(--main); text-shadow: 0 0 10px rgba(0,255,204,0.5); border-bottom: 1px solid #1e1f22; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+        .sidebar-header { height: 48px; padding: 0 16px; display: flex; align-items: center; font-weight: 800; color: var(--main); border-bottom: 1px solid #1e1f22; font-size: 14px; text-transform: uppercase; }
         .scroll-area { flex: 1; overflow-y: auto; padding: 10px; }
-        .cat-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin: 18px 0 6px 4px; display: flex; justify-content: space-between; align-items: center; }
+        .cat-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin: 18px 0 6px 4px; display: flex; justify-content: space-between; }
         .item { padding: 8px 10px; border-radius: 5px; cursor: pointer; color: #8e9297; display: flex; align-items: center; gap: 10px; margin-bottom: 2px; }
-        .item:hover { background: var(--hover); color: white; }
-        .item.active { background: #3f4248; color: white; font-weight: 500; }
+        .item:hover, .item.active { background: var(--hover); color: white; }
 
-        /* ZONE UTILISATEUR */
+        /* UTILISATEUR */
         .user-panel { padding: 8px; background: #232428; display: flex; align-items: center; gap: 8px; border-top: 1px solid #1e1f22; }
-        .u-ava-container { position: relative; cursor: pointer; }
-        .u-ava { width: 32px; height: 32px; border-radius: 50%; background: var(--main); border: 2px solid transparent; }
-        .u-status { position: absolute; bottom: -2px; right: -2px; width: 14px; height: 14px; border-radius: 50%; border: 3px solid #232428; background: #43b581; }
-        .u-info { flex: 1; cursor: pointer; overflow: hidden; }
-        .u-name { font-size: 13px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+        .u-ava { width: 32px; height: 32px; border-radius: 50%; background: var(--main); position: relative; cursor: pointer; }
+        .u-info { flex: 1; cursor: pointer; }
+        .u-name { font-size: 13px; font-weight: 700; }
 
         /* CHAT */
-        .main { flex: 1; display: flex; flex-direction: column; background: #313338; position: relative; }
-        .top-nav { height: 48px; padding: 0 16px; display: flex; align-items: center; border-bottom: 1px solid #26272b; font-weight: 600; gap: 15px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-        #messages-container { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; scroll-behavior: smooth; }
+        .main { flex: 1; display: flex; flex-direction: column; background: #313338; }
+        .top-nav { height: 48px; padding: 0 16px; display: flex; align-items: center; border-bottom: 1px solid #26272b; font-weight: 600; gap: 10px; }
+        #messages-container { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
         
-        .message { display: flex; gap: 16px; animation: msgIn 0.3s ease-out; }
-        .message:hover { background: rgba(0,0,0,0.05); }
-        .m-ava { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .m-user { font-weight: 600; color: white; margin-right: 8px; cursor: pointer; }
-        .m-user:hover { text-decoration: underline; }
-        .m-time { font-size: 11px; color: var(--text-muted); }
-        .m-text { color: #dcddde; margin-top: 4px; line-height: 1.4; word-break: break-all; font-size: 15px; }
+        .message { display: flex; gap: 15px; animation: fadeIn 0.3s; }
+        .m-ava { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; }
+        .m-user { font-weight: 600; }
+        .m-time { font-size: 11px; color: var(--text-muted); margin-left: 8px; }
+        .m-text { color: #dcddde; margin-top: 2px; }
 
         .input-area { padding: 0 20px 24px 20px; }
-        .input-box { background: #383a40; border-radius: 8px; display: flex; align-items: center; padding: 11px 16px; gap: 15px; }
-        #main-input { background: transparent; border: none; color: white; flex: 1; outline: none; font-size: 15px; }
+        .input-box { background: #383a40; border-radius: 8px; padding: 11px 16px; }
+        #main-input { background: transparent; border: none; color: white; width: 100%; outline: none; }
 
         /* MODAL */
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal { background: #18191c; width: 440px; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid #333; }
-        .m-banner { height: 100px; background: var(--main); position: relative; transition: 0.5s; }
-        .m-ava-big { width: 80px; height: 80px; border-radius: 50%; border: 6px solid #18191c; position: absolute; bottom: -40px; left: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        .m-body { padding: 50px 20px 20px 20px; }
-        input[type="text"] { width: 100%; background: #000; border: 1px solid #333; color: white; padding: 12px; border-radius: 6px; margin: 10px 0; outline: none; }
-        input[type="text"]:focus { border-color: var(--main); }
-        .btn-save { background: var(--main); color: black; border: none; padding: 12px; width: 100%; border-radius: 4px; font-weight: 800; cursor: pointer; margin-top: 10px; }
-        .btn-save:hover { filter: brightness(1.1); }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal { background: #18191c; width: 400px; border-radius: 8px; padding: 20px; border: 1px solid #333; }
+        input[type="text"] { width: 100%; background: #000; border: 1px solid #333; color: white; padding: 10px; border-radius: 4px; margin: 10px 0; }
+        .btn-save { background: var(--main); color: black; border: none; padding: 10px; width: 100%; border-radius: 4px; font-weight: bold; cursor: pointer; }
 
-        .discord-btn { position: absolute; top: 10px; right: 20px; background: #5865F2; padding: 8px 15px; border-radius: 4px; color: white; text-decoration: none; font-weight: bold; font-size: 11px; z-index: 10; transition: 0.3s; }
-        .discord-btn:hover { background: #4752c4; transform: translateY(-2px); }
-        
-        @keyframes msgIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #1e1f22; border-radius: 10px; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
     <nav class="srv-nav">
         <button class="srv-icon active" onclick="location.reload()">LC</button>
-        <div style="width:32px; height:2px; background:#333;"></div>
-        <button class="srv-icon" style="color:#43b581; font-size: 24px;" onclick="createRoom()">+</button>
+        <button class="srv-icon" style="color:#43b581;" onclick="createRoom()">+</button>
     </nav>
 
     <aside class="sidebar">
         <div class="sidebar-header">Lanou-Cord Studio</div>
         <div class="scroll-area">
-            <div class="item" id="btn-friends">👥 Amis</div>
-            <div class="cat-label"><span>Salons Textuels</span> <span style="cursor:pointer" onclick="createRoom()">+</span></div>
+            <div class="item" id="btn-friends" onclick="showFriends()">👥 Amis</div>
+            <div class="cat-label">Salons Textuels <span onclick="createRoom()" style="cursor:pointer">+</span></div>
             <div id="channels-list"></div>
         </div>
         <div class="user-panel">
-            <div class="u-ava-container" onclick="openSettings()">
-                <div class="u-ava" id="my-ava"></div>
-                <div class="u-status"></div>
-            </div>
+            <div class="u-ava" id="my-ava" onclick="openSettings()"></div>
             <div class="u-info" onclick="openSettings()">
                 <div class="u-name" id="my-name">Chargement...</div>
                 <div style="font-size:10px; color:var(--text-muted)">#<span id="my-id"></span></div>
             </div>
-            <div style="cursor:pointer; opacity: 0.6;" onclick="openSettings()">⚙️</div>
+            <button onclick="openSettings()" style="background:none; border:none; cursor:pointer;">⚙️</button>
         </div>
     </aside>
 
     <main class="main">
-        <a href="https://discord.gg/6Zq7GKypYy" target="_blank" class="discord-btn">REJOINDRE LE DISCORD</a>
         <div class="top-nav">
-            <span style="color:#72767d; font-size:24px;">#</span>
+            <span style="color:#72767d; font-size:20px;">#</span>
             <span id="nav-title">général</span>
         </div>
         <div id="messages-container"></div>
-        <div class="input-area">
+        <div class="input-area" id="input-zone">
             <div class="input-box">
-                <input type="text" id="main-input" placeholder="Envoyer un message dans #général">
+                <input type="text" id="main-input" placeholder="Envoyer un message...">
             </div>
         </div>
     </main>
 
     <div id="modal-settings" class="overlay" onclick="if(event.target==this) closeSettings()">
         <div class="modal">
-            <div class="m-banner" id="m-ban-prev"><div class="m-ava-big" id="m-ava-prev"></div></div>
-            <div class="m-body">
-                <label style="font-size: 11px; color: #b9bbbe; font-weight: bold; text-transform: uppercase;">Pseudo</label>
-                <input type="text" id="set-name" placeholder="Ton pseudo...">
-                <div style="display:flex; gap:10px; margin-top: 10px;">
-                    <div style="flex:1">
-                        <label style="font-size: 11px; color: #b9bbbe; font-weight: bold;">Avatar</label>
-                        <input type="color" id="set-color-ava" style="height: 40px; cursor: pointer;">
-                    </div>
-                    <div style="flex:1">
-                        <label style="font-size: 11px; color: #b9bbbe; font-weight: bold;">Bannière</label>
-                        <input type="color" id="set-color-ban" style="height: 40px; cursor: pointer;">
-                    </div>
-                </div>
-                <button class="btn-save" onclick="saveSettings()">ENREGISTRER</button>
-                <button onclick="closeSettings()" style="background:none; border:none; color:#888; width:100%; margin-top:15px; cursor:pointer; font-size: 12px;">Annuler</button>
+            <h3>Paramètres Profil</h3>
+            <input type="text" id="set-name" placeholder="Pseudo">
+            <div style="display:flex; gap:10px; margin-bottom:10px;">
+                <label>Couleur : <input type="color" id="set-color-ava"></label>
             </div>
+            <button class="btn-save" onclick="saveSettings()">ENREGISTRER</button>
         </div>
     </div>
 
@@ -151,8 +110,7 @@
         let user = {
             id: localStorage.getItem('ln_id') || Math.floor(1000 + Math.random()*9000),
             name: localStorage.getItem('ln_name') || "User-" + Math.floor(Math.random()*999),
-            color: localStorage.getItem('ln_color') || "#00ffcc",
-            banner: localStorage.getItem('ln_banner') || "#004433"
+            color: localStorage.getItem('ln_color') || "#00ffcc"
         };
         localStorage.setItem('ln_id', user.id);
         let activeChannel = "général";
@@ -162,64 +120,76 @@
             await loadChannels(); 
             await loadMessages();
             
-            // Écoute des messages
-            supabase.channel('public:messages').on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},p=>{
+            // Écoute des messages en temps réel
+            supabase.channel('room1').on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'}, p => {
                 if(p.new.channel === activeChannel) renderMessage(p.new);
             }).subscribe();
 
             // Écoute des nouveaux salons
-            supabase.channel('public:channels').on('postgres_changes',{event:'INSERT',schema:'public',table:'channels'},p=>{
-                loadChannels();
-            }).subscribe();
+            supabase.channel('room2').on('postgres_changes',{event:'INSERT',schema:'public',table:'channels'}, () => loadChannels()).subscribe();
         }
 
         function updateUI() {
             document.getElementById('my-name').innerText = user.name;
             document.getElementById('my-id').innerText = user.id;
             document.getElementById('my-ava').style.background = user.color;
-            document.getElementById('m-ava-prev').style.background = user.color;
-            document.getElementById('m-ban-prev').style.background = user.banner;
             document.getElementById('set-name').value = user.name;
             document.getElementById('set-color-ava').value = user.color;
-            document.getElementById('set-color-ban').value = user.banner;
-            document.getElementById('main-input').placeholder = `Envoyer un message dans #${activeChannel}`;
         }
 
         async function loadChannels() {
             const { data } = await supabase.from('channels').select('*').order('name');
             const list = document.getElementById('channels-list');
             list.innerHTML = "";
-            if (data) {
-                data.forEach(c => {
-                    const div = document.createElement('div');
-                    div.className = `item ${activeChannel === c.name ? 'active' : ''}`;
-                    div.innerHTML = `<span>#</span> ${c.name}`;
-                    div.onclick = () => { 
-                        activeChannel = c.name; 
-                        document.getElementById('nav-title').innerText = c.name; 
-                        updateUI();
-                        loadChannels(); 
-                        loadMessages(); 
-                    };
-                    list.appendChild(div);
-                });
-            }
+            data?.forEach(c => {
+                const div = document.createElement('div');
+                div.className = `item ${activeChannel === c.name ? 'active' : ''}`;
+                div.innerHTML = `# ${c.name}`;
+                div.onclick = () => switchChannel(c.name);
+                list.appendChild(div);
+            });
+        }
+
+        function switchChannel(name) {
+            activeChannel = name;
+            document.getElementById('nav-title').innerText = name;
+            document.getElementById('input-zone').style.display = "block";
+            document.getElementById('btn-friends').classList.remove('active');
+            loadChannels();
+            loadMessages();
+        }
+
+        async function showFriends() {
+            activeChannel = null;
+            document.getElementById('nav-title').innerText = "Amis";
+            document.getElementById('input-zone').style.display = "none";
+            document.querySelectorAll('.item').forEach(i => i.classList.remove('active'));
+            document.getElementById('btn-friends').classList.add('active');
+            
+            const { data } = await supabase.from('messages').select('username, color');
+            const uniqueUsers = [...new Map(data.map(item => [item['username'], item])).values()];
+            
+            const container = document.getElementById('messages-container');
+            container.innerHTML = "<h3>Utilisateurs en ligne</h3>";
+            uniqueUsers.forEach(u => {
+                container.innerHTML += `<div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                    <div style="width:30px; height:30px; border-radius:50%; background:${u.color}"></div>
+                    <span>${u.username}</span>
+                </div>`;
+            });
         }
 
         async function createRoom() {
-            const n = prompt("Nom du nouveau salon :");
-            if(n && n.trim() !== "") {
-                const cleanName = n.toLowerCase().replace(/\s+/g, '-').trim();
-                await supabase.from('channels').insert([{ name: cleanName }]);
-            }
+            const n = prompt("Nom du salon :");
+            if(n) await supabase.from('channels').insert([{ name: n.toLowerCase().trim() }]);
         }
 
         async function loadMessages() {
+            if(!activeChannel) return;
             const container = document.getElementById('messages-container');
-            container.innerHTML = "<div style='color:#72767d; text-align:center; margin-top:20px;'>Chargement de l'historique...</div>";
-            const { data } = await supabase.from('messages').select('*').eq('channel', activeChannel).order('created_at', {ascending: true});
             container.innerHTML = "";
-            if (data) data.forEach(m => renderMessage(m));
+            const { data } = await supabase.from('messages').select('*').eq('channel', activeChannel).order('created_at', {ascending: true});
+            data?.forEach(m => renderMessage(m));
         }
 
         function renderMessage(m) {
@@ -228,9 +198,9 @@
             div.className = "message";
             const time = new Date(m.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
             div.innerHTML = `
-                <div class="m-ava" style="background:${m.color || '#00ffcc'}"></div>
-                <div class="m-content">
-                    <div class="m-header"><span class="m-user" style="color:${m.color || 'white'}">${m.username}</span><span class="m-time">aujourd'hui à ${time}</span></div>
+                <div class="m-ava" style="background:${m.color}"></div>
+                <div>
+                    <span class="m-user" style="color:${m.color}">${m.username}</span><span class="m-time">${time}</span>
                     <div class="m-text">${m.content}</div>
                 </div>`;
             container.appendChild(div);
@@ -239,26 +209,19 @@
 
         async function sendMessage() {
             const inp = document.getElementById('main-input');
-            const val = inp.value.trim();
-            if(!val) return;
-            inp.value = "";
-            await supabase.from('messages').insert([
-                { username: user.name, content: val, color: user.color, channel: activeChannel }
-            ]);
+            if(!inp.value.trim()) return;
+            const msg = inp.value; inp.value = "";
+            await supabase.from('messages').insert([{ username: user.name, content: msg, color: user.color, channel: activeChannel }]);
         }
 
         function openSettings() { document.getElementById('modal-settings').style.display = "flex"; }
         function closeSettings() { document.getElementById('modal-settings').style.display = "none"; }
-
         function saveSettings() {
-            user.name = document.getElementById('set-name').value || user.name;
+            user.name = document.getElementById('set-name').value;
             user.color = document.getElementById('set-color-ava').value;
-            user.banner = document.getElementById('set-color-ban').value;
             localStorage.setItem('ln_name', user.name);
             localStorage.setItem('ln_color', user.color);
-            localStorage.setItem('ln_banner', user.banner);
-            updateUI();
-            closeSettings();
+            updateUI(); closeSettings();
         }
 
         document.getElementById('main-input').onkeydown = (e) => { if(e.key === 'Enter') sendMessage(); };
