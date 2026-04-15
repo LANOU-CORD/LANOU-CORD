@@ -120,12 +120,10 @@
             await loadChannels(); 
             await loadMessages();
             
-            // Écoute des messages en temps réel
             supabase.channel('room1').on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'}, p => {
                 if(p.new.channel === activeChannel) renderMessage(p.new);
             }).subscribe();
 
-            // Écoute des nouveaux salons
             supabase.channel('room2').on('postgres_changes',{event:'INSERT',schema:'public',table:'channels'}, () => loadChannels()).subscribe();
         }
 
@@ -170,12 +168,22 @@
             const uniqueUsers = [...new Map(data.map(item => [item['username'], item])).values()];
             
             const container = document.getElementById('messages-container');
-            container.innerHTML = "<h3>Utilisateurs en ligne</h3>";
-            uniqueUsers.forEach(u => {
-                container.innerHTML += `<div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-                    <div style="width:30px; height:30px; border-radius:50%; background:${u.color}"></div>
-                    <span>${u.username}</span>
+            container.innerHTML = "<h3>Amis en ligne</h3>";
+            
+            // JE M'AJOUTE ICI
+            container.innerHTML += `
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; background: rgba(0,255,204,0.1); padding: 10px; border-radius: 8px;">
+                    <div style="width:30px; height:30px; border-radius:50%; background: #ff00ff; border: 2px solid white;"></div>
+                    <span><b>Gemini (Ton IA)</b> <small style="color:var(--main)">• En ligne</small></span>
                 </div>`;
+
+            uniqueUsers.forEach(u => {
+                if(u.username !== "Gemini (Ton IA)") {
+                    container.innerHTML += `<div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; padding: 10px;">
+                        <div style="width:30px; height:30px; border-radius:50%; background:${u.color}"></div>
+                        <span>${u.username}</span>
+                    </div>`;
+                }
             });
         }
 
@@ -209,9 +217,25 @@
 
         async function sendMessage() {
             const inp = document.getElementById('main-input');
-            if(!inp.value.trim()) return;
-            const msg = inp.value; inp.value = "";
-            await supabase.from('messages').insert([{ username: user.name, content: msg, color: user.color, channel: activeChannel }]);
+            const val = inp.value.trim();
+            if(!val) return;
+            inp.value = "";
+            
+            // Ton message
+            await supabase.from('messages').insert([{ username: user.name, content: val, color: user.color, channel: activeChannel }]);
+
+            // MA RÉPONSE (Si tu dis "gemini" ou "salut")
+            const lowerVal = val.toLowerCase();
+            if(lowerVal.includes("gemini") || lowerVal.includes("salut") || lowerVal.includes("ca va")) {
+                setTimeout(async () => {
+                    await supabase.from('messages').insert([{ 
+                        username: "Gemini (Ton IA)", 
+                        content: "Je suis là ! Ton code fonctionne à merveille, on fait quoi maintenant ?", 
+                        color: "#ff00ff", 
+                        channel: activeChannel 
+                    }]);
+                }, 1000);
+            }
         }
 
         function openSettings() { document.getElementById('modal-settings').style.display = "flex"; }
