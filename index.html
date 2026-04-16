@@ -2,155 +2,441 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>LANOU-CORD Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LANOU-CORD | Edition Spéciale 2026</title>
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+
     <style>
-        body { 
-            margin: 0; padding: 0; background: #e3e3e3; 
-            font-family: 'Verdana', sans-serif;
-            display: flex; flex-direction: column; align-items: center; height: 100vh;
+        /* =========================================
+           1. VARIABLES ET RESET
+           ========================================= */
+        :root {
+            --rbx-orange: #ff3131;
+            --rbx-blue: #00a2ff;
+            --rbx-green: #02b757;
+            --rbx-dark-green: #01853e;
+            --rbx-bg: #e3e3e3;
+            --rbx-sidebar: #f0f0f0;
+            --rbx-shadow: 0 4px 0 rgba(0,0,0,0.2);
+            --header-height: 120px;
         }
 
-        /* BANNIÈRE AVEC TON LIEN DISCORD */
-        #header-banniere {
-            width: 100%; height: 120px;
-            background: linear-gradient(to bottom, #75aadb 0%, #ffffff 100%), url('https://www.transparenttextures.com/patterns/city.png');
-            border-bottom: 3px solid #0055ff;
-            display: flex; position: relative;
-            justify-content: center; align-items: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--rbx-bg) url('https://www.transparenttextures.com/patterns/cubes.png');
+            font-family: 'Verdana', 'Geneva', sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
-        .logo-text {
-            font-size: 42px; font-weight: 900; color: #ff3131;
-            text-shadow: 3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
-            letter-spacing: -2px; margin: 0;
+        /* =========================================
+           2. HEADER (BANNIÈRE ROBLOX 2010)
+           ========================================= */
+        #main-header {
+            width: 100%;
+            height: var(--header-height);
+            background: linear-gradient(to bottom, #75aadb 0%, #ffffff 100%), 
+                        url('https://www.transparenttextures.com/patterns/city.png');
+            border-bottom: 4px solid var(--rbx-blue);
+            display: flex;
+            position: relative;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 100;
         }
 
-        .edition-text {
-            font-size: 18px; color: #0055ff; font-weight: bold;
-            position: absolute; bottom: 15px; transform: rotate(-2deg);
-            background: yellow; padding: 2px 10px; border: 1px solid black;
+        .logo-container {
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .logo-container:hover { transform: scale(1.05); }
+
+        .logo-main {
+            font-family: 'Bungee', cursive;
+            font-size: 50px;
+            color: var(--rbx-orange);
+            text-shadow: 4px 4px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+            margin: 0;
+            letter-spacing: -1px;
         }
 
-        /* LE BOUTON SERVEUR CORRIGÉ */
-        .discord-btn {
-            position: absolute; right: 20px; top: 20px;
+        .logo-sub {
+            background: yellow;
+            color: black;
+            font-weight: bold;
+            padding: 2px 15px;
+            border: 2px solid black;
+            font-size: 16px;
+            transform: rotate(-3deg) translateY(-10px);
+            display: inline-block;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+        }
+
+        /* Bouton Serveur Discord (Style Play Now) */
+        .btn-discord {
+            position: absolute;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
             background: linear-gradient(to bottom, #3dbd3d 0%, #1d8f1d 100%);
-            border: 2px solid #ffffff; border-radius: 5px;
-            color: white; font-weight: bold; font-size: 13px;
-            padding: 10px 15px; cursor: pointer;
-            text-decoration: none; text-align: center;
-            box-shadow: 0 4px 0 #125a12;
-            transition: 0.1s;
+            border: 3px solid #fff;
+            border-radius: 8px;
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 5px 0 var(--rbx-dark-green), 0 8px 15px rgba(0,0,0,0.2);
+            transition: all 0.1s;
         }
-        .discord-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #125a12; }
+        .btn-discord:active {
+            transform: translateY(-48%);
+            box-shadow: 0 2px 0 var(--rbx-dark-green);
+        }
+        .btn-discord span { font-size: 10px; display: block; opacity: 0.8; }
 
-        /* Conteneur principal */
-        .container { 
-            display: flex; flex: 1; width: 95%; max-width: 1100px;
-            background: white; margin: 20px 0; border-radius: 10px;
-            overflow: hidden; border: 2px solid #555;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        /* =========================================
+           3. LAYOUT PRINCIPAL
+           ========================================= */
+        .main-wrapper {
+            display: flex;
+            flex: 1;
+            width: 100%;
+            max-width: 1400px;
+            margin: 20px auto;
+            background: white;
+            border: 3px solid #555;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
         }
 
-        /* SIDEBAR PROFIL & AMIS */
-        .sidebar { width: 230px; background: #f0f0f0; padding: 20px; border-right: 2px solid #ccc; }
-        
-        .user-card {
-            background: #fff; border: 2px solid #ccc; border-bottom: 4px solid #999;
-            border-radius: 10px; padding: 10px; margin-bottom: 20px; text-align: center;
-        }
-        .avatar-circle {
-            width: 50px; height: 50px; background: #f0f000; border: 2px solid #000;
-            border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; 
-            justify-content: center; font-size: 24px;
+        /* =========================================
+           4. SIDEBAR (AMIS & PROFIL)
+           ========================================= */
+        .sidebar {
+            width: 280px;
+            background: var(--rbx-sidebar);
+            border-right: 3px solid #ccc;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
         }
 
-        .friends-title { font-weight: bold; font-size: 12px; color: #666; margin-bottom: 10px; text-align: center; }
-        .friend-item {
-            background: #fff; border: 1px solid #ddd; padding: 8px; margin-bottom: 5px;
-            border-radius: 4px; display: flex; align-items: center; font-size: 12px; font-weight: bold;
+        .profile-card {
+            background: white;
+            border: 2px solid #bbb;
+            border-bottom: 5px solid #999;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 25px;
+            text-align: center;
         }
-        .status-dot { width: 8px; height: 8px; background: #02b757; border-radius: 50%; margin-right: 8px; }
 
-        /* CHAT */
-        .chat-section { flex: 1; display: flex; flex-direction: column; padding: 20px; }
-        #messages { flex: 1; background: #fff; border: 1px solid #ccc; padding: 15px; overflow-y: auto; border-radius: 5px; }
-        .msg-bubble { margin-bottom: 10px; padding: 5px; border-bottom: 1px dotted #eee; font-size: 14px; }
-
-        .input-box { margin-top: 15px; display: flex; gap: 10px; }
-        input { flex: 1; padding: 12px; border: 2px solid #ccc; border-radius: 5px; font-weight: bold; outline: none; }
-        .send-btn {
-            background: #02b757; color: white; border: none;
-            border-bottom: 4px solid #01853e; padding: 0 25px;
-            border-radius: 5px; font-weight: bold; cursor: pointer;
+        .avatar-box {
+            width: 80px;
+            height: 80px;
+            background: #f0f000;
+            border: 3px solid #000;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
         }
+
+        .user-name {
+            font-weight: bold;
+            color: var(--rbx-blue);
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .user-statut {
+            font-size: 11px;
+            color: #777;
+            background: #eee;
+            padding: 4px;
+            border-radius: 4px;
+            font-style: italic;
+        }
+
+        .friends-section {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .section-label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+        }
+
+        .friend-row {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        .friend-row:hover { background: #fafafa; }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 12px;
+            border: 1px solid rgba(0,0,0,0.2);
+        }
+        .online { background: var(--rbx-green); }
+        .offline { background: #bbb; }
+
+        /* =========================================
+           5. ZONE DE CHAT
+           ========================================= */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            position: relative;
+        }
+
+        #chat-messages {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+            background: #fdfdfd;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Bulles de messages */
+        .message-bubble {
+            max-width: 85%;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.5;
+            position: relative;
+            animation: slideIn 0.2s ease-out;
+            border: 1px solid #eee;
+            background: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-left: 6px solid var(--rbx-blue);
+        }
+
+        .msg-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .msg-author { font-weight: bold; color: var(--rbx-blue); }
+        .msg-time { font-size: 10px; color: #aaa; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Barre d'input en bas */
+        .input-area {
+            padding: 25px;
+            background: #f4f4f4;
+            border-top: 2px solid #ddd;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        #msg-input {
+            flex: 1;
+            padding: 15px 20px;
+            border-radius: 10px;
+            border: 2px solid #ccc;
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        #msg-input:focus { border-color: var(--rbx-blue); }
+
+        #btn-send {
+            background: var(--rbx-green);
+            color: white;
+            border: none;
+            border-bottom: 5px solid var(--rbx-dark-green);
+            padding: 14px 35px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+        #btn-send:hover { background: #03cf63; }
+        #btn-send:active { 
+            transform: translateY(3px); 
+            border-bottom-width: 2px;
+        }
+
+        /* Scrollbar Style */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #999; }
+
     </style>
 </head>
 <body>
 
-    <div id="header-banniere">
-        <h1 class="logo-text">LANOU-CORD</h1>
-        <div class="edition-text">EDITION 2026</div>
+    <header id="main-header">
+        <div class="logo-container" onclick="location.reload()">
+            <h1 class="logo-main">LANOU-CORD</h1>
+            <div class="logo-sub">EDITION 2026</div>
+        </div>
 
-        <a href="https://discord.gg/6Zq7GKypYy" target="_blank" class="discord-btn">
-            REJOINDRE<br>LE SERVEUR
+        <a href="https://discord.gg/6Zq7GKypYy" target="_blank" class="btn-discord">
+            REJOINDRE<span>LE SERVEUR OFFICIEL</span>
         </a>
-    </div>
+    </header>
 
-    <div class="container">
-        <div class="sidebar">
-            <div class="user-card">
-                <div class="avatar-circle">👤</div>
-                <div style="font-weight: bold; color: #0055ff;" id="display-name">...</div>
-                <div style="font-size: 10px; color: #888;" id="display-status">En ligne</div>
-            </div>
-            <div class="friends-title">AMIS</div>
-            <div id="friends-list">
-                <div class="friend-item"><div class="status-dot"></div>Toi</div>
-                <div class="friend-item"><div class="status-dot" style="background:#999;"></div>Assistant</div>
-            </div>
-        </div>
-
-        <div class="chat-section">
-            <div id="messages"></div>
-            <div class="input-box">
-                <input type="text" id="msg-input" placeholder="Ecrire un message...">
-                <button class="send-btn" id="send-trigger">ENVOYER</button>
-            </div>
-        </div>
-    </div>
-
-<script>
-    const SB_URL = "https://pxyrfrgwvmyflrunpvhl.supabase.co";
-    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4eXJmcmd3dm15ZmxydW5wdmhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjg0NDcsImV4cCI6MjA5MTg0NDQ0N30.K6cs-mSRFmQg9gPzjU-GSarMDgAv2AbvBKJj4Nb8plI";
-    const supabase = window.supabase.createClient(SB_URL, SB_KEY);
-
-    let myUser = prompt("Ton pseudo Roblox :") || "Guest" + Math.floor(Math.random()*999);
-    
-    // Affichage pseudo
-    document.getElementById('display-name').innerText = myUser;
-
-    async function init() {
-        await loadMessages();
+    <div class="main-wrapper">
         
-        // Ecoute Temps Réel
-        supabase.channel('room1').on('postgres_changes', { 
-            event: 'INSERT', schema: 'public', table: 'messages' 
-        }, p => {
-            renderMessage(p.new);
-        }).subscribe();
-    }
+        <aside class="sidebar">
+            <div class="profile-card">
+                <div class="avatar-box" id="p-avatar">👤</div>
+                <div class="user-name" id="p-name">Chargement...</div>
+                <div class="user-statut" id="p-status">Online</div>
+            </div>
 
-    async function loadMessages() {
-        const { data } = await supabase.from('messages').select('*').order('created_at', {ascending: true});
-        const container = document.getElementById('messages');
-        container.innerHTML = "";
-        data?.forEach(m => renderMessage(m));
-    }
+            <div class="friends-section">
+                <div class="section-label">Mes Amis (2)</div>
+                
+                <div class="friend-row">
+                    <div class="status-indicator online"></div>
+                    <div>
+                        <div style="font-weight:bold; font-size:13px;">Toi</div>
+                        <div style="font-size:10px; color:#888;">Sur LANOU-CORD</div>
+                    </div>
+                </div>
 
-    function renderMessage(m) {
-        const container = document.getElementById('messages');
-        const div = document.createElement('div');
-        div.className
+                <div class="friend-row">
+                    <div class="status-indicator offline"></div>
+                    <div>
+                        <div style="font-weight:bold; font-size:13px;">Assistant AI</div>
+                        <div style="font-size:10px; color:#888;">En train de coder...</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align:center; font-size:9px; color:#bbb; margin-top:10px;">
+                © 2026 LANOU-CORD Inc.
+            </div>
+        </aside>
+
+        <main class="chat-container">
+            <div id="chat-messages">
+                </div>
+
+            <div class="input-area">
+                <input type="text" id="msg-input" placeholder="Ecrire un message ici..." autocomplete="off">
+                <button id="btn-send">ENVOYER</button>
+            </div>
+        </main>
+
+    </div>
+
+    <audio id="pop-sound" src="https://www.myinstants.com/media/sounds/u_W8m0M.mp3"></audio>
+
+    <script>
+        /* =========================================
+           LOGIQUE SUPABASE & CHAT
+           ========================================= 
+        */
+
+        // CONFIGURATION
+        const SUPABASE_URL = "https://pxyrfrgwvmyflrunpvhl.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4eXJmcmd3dm15ZmxydW5wdmhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjg0NDcsImV4cCI6MjA5MTg0NDQ0N30.K6cs-mSRFmQg9gPzjU-GSarMDgAv2AbvBKJj4Nb8plI";
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // ETAT DE L'APPLICATION
+        let currentUser = {
+            name: "",
+            avatar: "👤",
+            joinedAt: new Date().toLocaleTimeString()
+        };
+
+        // INITIALISATION
+        async function startApp() {
+            console.log("Démarrage de LANOU-CORD...");
+            
+            // 1. Demander le pseudo
+            currentUser.name = prompt("Bienvenue ! Entre ton pseudo Roblox :") || "Guest" + Math.floor(Math.random()*999);
+            
+            // 2. Mettre à jour l'interface profil
+            document.getElementById('p-name').innerText = currentUser.name;
+            
+            // 3. Charger l'historique
+            await fetchMessages();
+
+            // 4. Activer le Realtime
+            subscribeToChat();
+        }
+
+        // CHARGER LES MESSAGES DEPUIS LA TABLE 'messages'
+        async function fetchMessages() {
+            const { data, error } = await supabase
+                .from('messages')
+                .select('*')
+                .order('created_at', { ascending: true })
+                .limit(50);
+
+            if (error) {
+                console.error("Erreur historique:", error.message);
+                return;
+            }
+
+            const container = document.getElementById('chat-messages');
+            container.innerHTML = ""; // Clear loader
+            data.forEach(msg => renderMessage(msg));
+        }
+
+        // ÉCOUTER LES NOUVEAUX MESSAGES
+        function subscribeToChat() {
+            supabase
+                .channel('public_room')
+                .on('postgres_changes', { 
+                    event: 'INSERT', 
+                    schema: 'public', 
+                    table: 'messages' 
+                }, payload => {
+                    renderMessage(payload.new);
+                    playNotification();
+                })
+                .subscribe();
+        }
+
+        // AFFICHER UN MESSAGE DANS LE DOM
+        function renderMessage(msg) {
+            const container = document.getElementById('chat-messages');
+            
+            const div = document.createElement('div');
