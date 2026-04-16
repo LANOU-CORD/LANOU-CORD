@@ -3,98 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LANOU-CORD 2026 | Ultimate Edition</title>
+    <title>LANOU-CORD 2026 | Future Edition</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        /* RETOUR AU DESIGN FUTURISTE ORIGINAL */
         :root {
             --neon-blue: #00f2ff;
             --glass-bg: rgba(255, 255, 255, 0.1);
             --glass-border: rgba(255, 255, 255, 0.2);
+            --bg-dark: #00050a;
+            --bg-gradient: radial-gradient(circle at center, #001a33 0%, #00050a 100%);
         }
 
-        /* THÈMES DE COULEURS */
-        body.theme-blue { --neon-blue: #00f2ff; --accent: #001a33; }
-        body.theme-green { --neon-blue: #00ff88; --accent: #001a0a; }
-        body.theme-red { --neon-blue: #ff0055; --accent: #1a0005; }
+        /* GESTION DES THÈMES SUR LES COULEURS NÉON */
+        body.theme-blue { --neon-blue: #00f2ff; --bg-gradient: radial-gradient(circle at center, #001a33 0%, #00050a 100%); }
+        body.theme-green { --neon-blue: #00ff88; --bg-gradient: radial-gradient(circle at center, #001a0a 0%, #00050a 100%); }
+        body.theme-red { --neon-blue: #ff0055; --bg-gradient: radial-gradient(circle at center, #1a0005 0%, #00050a 100%); }
 
         body {
             margin: 0; padding: 0;
-            font-family: 'Segoe UI', sans-serif;
-            background: radial-gradient(circle at center, var(--accent) 0%, #000 100%);
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-gradient);
             color: white; height: 100vh;
             display: flex; flex-direction: column; align-items: center;
             overflow: hidden; transition: 0.5s;
         }
 
         header {
-            width: 100%; height: 50px; background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(10px); border-bottom: 1px solid var(--neon-blue);
+            width: 100%; height: 50px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--neon-blue);
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px; box-sizing: border-box; box-shadow: 0 0 15px var(--neon-blue);
+            padding: 0 20px; box-sizing: border-box;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
         }
 
-        .logo { font-weight: 900; color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); }
+        .logo {
+            font-weight: 900; font-size: 20px; letter-spacing: 2px;
+            text-transform: uppercase; color: var(--neon-blue);
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
 
         .app-container {
-            margin-top: 40px; width: 850px; height: 550px;
-            background: var(--glass-bg); backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border); border-radius: 20px;
-            display: flex; flex-direction: column; overflow: hidden;
+            margin-top: 40px;
+            width: 850px; height: 550px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
         }
 
         .main-layout { display: flex; flex: 1; overflow: hidden; }
 
-        aside { width: 220px; background: rgba(0,0,0,0.2); border-right: 1px solid var(--glass-border); padding: 20px; }
+        aside {
+            width: 220px; background: rgba(0, 0, 0, 0.2);
+            border-right: 1px solid var(--glass-border);
+            padding: 20px;
+        }
 
-        #chat-scroller { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+        .contact-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px; border-radius: 12px; margin-bottom: 10px;
+            display: flex; align-items: center; gap: 10px;
+            border: 1px solid transparent; transition: 0.3s;
+        }
+        .contact-card:hover { border-color: var(--neon-blue); background: rgba(0, 242, 255, 0.1); }
+
+        .status { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 5px currentColor; background: currentColor; }
+
+        #chat-scroller {
+            flex: 1; padding: 20px; overflow-y: auto;
+            display: flex; flex-direction: column; gap: 12px;
+        }
 
         .message {
-            max-width: 80%; padding: 12px; border-radius: 15px;
-            background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
+            max-width: 80%; padding: 12px 16px; border-radius: 15px;
+            font-size: 14px; line-height: 1.5;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            word-wrap: break-word;
         }
-        .message.me { align-self: flex-end; border-color: var(--neon-blue); background: rgba(0, 242, 255, 0.05); }
+        .message.me { align-self: flex-end; border-color: var(--neon-blue); background: rgba(0, 242, 255, 0.1); }
+        
+        .chat-image {
+            max-width: 100%; border-radius: 10px; margin-top: 8px;
+            border: 1px solid var(--neon-blue); box-shadow: 0 0 10px rgba(0, 242, 255, 0.2);
+        }
 
-        .chat-image { max-width: 100%; border-radius: 10px; border: 1px solid var(--neon-blue); }
-
-        .input-bar { padding: 20px; background: rgba(0,0,0,0.3); display: flex; gap: 10px; }
+        .input-bar {
+            padding: 20px; background: rgba(0,0,0,0.3);
+            display: flex; gap: 10px;
+        }
 
         input, select {
-            background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border);
-            border-radius: 10px; padding: 10px; color: white; outline: none;
+            flex: 1; background: rgba(255,255,255,0.1);
+            border: 1px solid var(--glass-border); border-radius: 10px;
+            padding: 12px; color: white; outline: none; transition: 0.3s;
         }
+        input:focus { border-color: var(--neon-blue); box-shadow: 0 0 10px rgba(0, 242, 255, 0.2); }
 
         .btn-send {
             background: var(--neon-blue); border: none; border-radius: 10px;
-            padding: 0 20px; font-weight: bold; cursor: pointer; color: #000;
+            padding: 0 20px; font-weight: bold; cursor: pointer;
+            color: #000; transition: 0.3s;
         }
+        .btn-send:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--neon-blue); }
 
         #modal {
             position: fixed; inset: 0; background: rgba(0,0,0,0.8);
-            display: none; justify-content: center; align-items: center;
+            display: none; justify-content: center; align-items: center; z-index: 1000;
         }
         .modal-content {
-            background: #111; border: 1px solid var(--neon-blue);
-            padding: 30px; border-radius: 20px; text-align: center;
+            background: #001a33; border: 1px solid var(--neon-blue);
+            padding: 30px; border-radius: 20px; width: 300px;
+            text-align: center; box-shadow: 0 0 30px var(--neon-blue);
         }
     </style>
 </head>
 <body class="theme-blue">
 
     <header>
-        <div class="logo">LANOU-CORD 2026</div>
-        <button class="btn-send" onclick="openSettings()">PROPRIÉTÉS</button>
+        <div class="logo">LANOU-CORD <span style="font-weight: 200;">2026</span></div>
+        <button class="btn-send" style="padding: 5px 15px;" onclick="openSettings()">PROPRIÉTÉS</button>
     </header>
 
     <div class="app-container">
         <div class="main-layout">
             <aside>
-                <h3 style="font-size: 10px; color: var(--neon-blue);">SYSTÈME</h3>
-                <p style="font-size: 12px;">Utilisateur: <span id="display-name">...</span></p>
+                <h3 style="font-size: 12px; color: var(--neon-blue); margin-bottom: 20px;">CHANNELS</h3>
+                <div class="contact-card">
+                    <div class="status" style="color: #00ff88;"></div>
+                    <span>LANOU (Admin)</span>
+                </div>
+                <div class="contact-card">
+                    <div class="status" style="color: var(--neon-blue);"></div>
+                    <span>Gemini AI</span>
+                </div>
             </aside>
+
             <main style="flex:1; display:flex; flex-direction:column;">
                 <div id="chat-scroller"></div>
                 <div class="input-bar">
-                    <input type="text" id="user-input" placeholder="Message ou /commande...">
+                    <input type="text" id="user-input" placeholder="Transmission ou /commande...">
                     <button class="btn-send" id="send-btn">ENVOYER</button>
                 </div>
             </main>
@@ -103,16 +157,17 @@
 
     <div id="modal">
         <div class="modal-content">
-            <h3>PARAMÈTRES INTERFACE</h3>
-            <input type="text" id="new-name" placeholder="Pseudo" style="width: 80%;"><br><br>
-            <label>THÈME :</label>
-            <select id="theme-select" style="width: 80%;">
-                <option value="theme-blue">Néon Blue (Original)</option>
+            <h2 style="color: var(--neon-blue);">INTERFACE ID</h2>
+            <input type="text" id="new-name" placeholder="Nouveau Pseudo" style="width: 100%; margin-bottom: 10px;">
+            <select id="theme-select" style="width: 100%; margin-bottom: 20px;">
+                <option value="theme-blue">Néon Blue</option>
                 <option value="theme-green">Emerald City</option>
                 <option value="theme-red">Crimson Code</option>
-            </select><br><br>
-            <button class="btn-send" onclick="saveSettings()">APPLIQUER</button>
-            <button class="btn-send" style="background:#444;" onclick="closeSettings()">FERMER</button>
+            </select>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-send" style="flex: 1;" onclick="saveSettings()">OK</button>
+                <button class="btn-send" style="flex: 1; background: #555; color: white;" onclick="closeSettings()">ANNULER</button>
+            </div>
         </div>
     </div>
 
@@ -120,8 +175,6 @@
         const SB_URL = "https://pxyrfrgwvmyflrunpvhl.supabase.co";
         const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4eXJmcmd3dm15ZmxydW5wdmhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjg0NDcsImV4cCI6MjA5MTg0NDQ0N30.K6cs-mSRFmQg9gPzjU-GSarMDgAv2AbvBKJj4Nb8plI";
         const client = window.supabase.createClient(SB_URL, SB_KEY);
-
-        // SONS (Bip futuriste court)
         const notifySound = new Audio('https://raw.githubusercontent.com/rafaelreis-hotmart/Audio-Notification/master/notification.mp3');
 
         let user = {
@@ -130,7 +183,6 @@
         };
 
         document.body.className = user.theme;
-        document.getElementById('display-name').innerText = user.name;
 
         function openSettings() { document.getElementById('modal').style.display='flex'; }
         function closeSettings() { document.getElementById('modal').style.display='none'; }
@@ -141,7 +193,6 @@
             localStorage.setItem('u_2026', user.name);
             localStorage.setItem('t_2026', user.theme);
             document.body.className = user.theme;
-            document.getElementById('display-name').innerText = user.name;
             closeSettings();
         }
 
@@ -152,15 +203,15 @@
             input.value = "";
 
             if(val.toLowerCase() === "/clear") {
-                if(confirm("🚨 Purger les données ?")) await client.from('messages').delete().neq('id', 0);
+                if(confirm("🚨 Purger l'historique ?")) await client.from('messages').delete().neq('id', 0);
                 return;
             }
 
             await client.from('messages').insert([{ username: user.name, content: val, user_color: "var(--neon-blue)" }]);
 
             if(val.toLowerCase().includes("@gemini") || val.startsWith("/")) {
-                let rep = "Analyse en cours... Protocol LANOU-CORD OK.";
-                if(val.includes("story") || val.includes("récit")) rep = "Ok, voilà ton récit : 'Lanou découvrit un serveur caché dans les décombres de 2010...'";
+                let rep = "Analyse... Système stable.";
+                if(val.includes("story") || val.includes("récit")) rep = "Ok : 'Lanou décrypta le code final sous une pluie de néons...'";
                 if(val.includes("image")) rep = "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=600";
                 
                 setTimeout(async () => {
@@ -185,8 +236,7 @@
             chat.appendChild(div);
             chat.scrollTop = chat.scrollHeight;
 
-            // Jouer le son si ce n'est pas mon message
-            if(!isMe) notifySound.play().catch(e => console.log("Son bloqué par le navigateur"));
+            if(!isMe) notifySound.play().catch(() => {});
         }
 
         async function load() {
