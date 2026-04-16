@@ -22,7 +22,6 @@
             overflow: hidden;
         }
 
-        /* BARRE DE NAVIGATION NEON */
         header {
             width: 100%; height: 50px;
             background: rgba(0, 0, 0, 0.5);
@@ -39,7 +38,6 @@
             text-shadow: 0 0 10px var(--neon-blue);
         }
 
-        /* APPLICATION GLASSMORPHISM */
         .app-container {
             margin-top: 40px;
             width: 850px; height: 550px;
@@ -54,7 +52,6 @@
 
         .main-layout { display: flex; flex: 1; overflow: hidden; }
 
-        /* LISTE CONTACTS FUTURISTE */
         aside {
             width: 220px; background: rgba(0, 0, 0, 0.2);
             border-right: 1px solid var(--glass-border);
@@ -71,7 +68,6 @@
 
         .status { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 5px currentColor; }
 
-        /* ZONE DE CHAT */
         main { flex: 1; display: flex; flex-direction: column; }
 
         #chat-scroller {
@@ -87,7 +83,6 @@
         }
         .message.me { align-self: flex-end; border-color: var(--neon-blue); background: rgba(0, 242, 255, 0.1); }
 
-        /* INPUT BAR */
         .input-bar {
             padding: 20px; background: rgba(0,0,0,0.3);
             display: flex; gap: 10px;
@@ -107,7 +102,6 @@
         }
         .btn-send:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--neon-blue); }
 
-        /* MODAL MODERNE */
         #modal {
             position: fixed; inset: 0; background: rgba(0,0,0,0.8);
             display: none; justify-content: center; align-items: center; z-index: 1000;
@@ -191,12 +185,41 @@
 
             await client.from('messages').insert([{ username: user.name, content: val, user_color: user.color }]);
 
-            // RÉPONSE GEMINI 2026
+            // LOGIQUE GÉNÉRATEUR INFINI @GEMINI
             if(val.toLowerCase().includes("@gemini")) {
+                let maReponse = "";
+                const v = val.toLowerCase();
+
+                if(v.includes("devoir") || v.includes("récit") || v.includes("histoire")) {
+                    // GÉNÉRATEUR DE RÉCITS (Milliers de combinaisons)
+                    const intros = ["Ok, voilà ton récit : 'L'explorateur ", "D'accord ! 'Le guerrier ", "Transmission reçue : 'Le hacker ", "Initialisation : 'Le pilote "];
+                    const heros = ["Lanou ", "Cyber-Lanou ", "L'agent secret Lanou ", "Le magicien Lanou "];
+                    const actions = ["traversa la frontière de ", "détruisit le pare-feu de ", "s'infiltra dans la base de ", "découvrit le secret de ", "reprogramma le coeur de "];
+                    const lieux = ["Néon-City... ", "la Matrice 2026... ", "la Planète Supabase... ", "l'Empire du Code... ", "la Dimension Glass... "];
+                    const fins = ["C'était le début d'une ère nouvelle.'", "Le destin du monde changea à jamais.'", "Personne ne revit jamais l'ancien code.'", "La victoire était totale.'"];
+
+                    const r1 = intros[Math.floor(Math.random() * intros.length)];
+                    const r2 = heros[Math.floor(Math.random() * heros.length)];
+                    const r3 = actions[Math.floor(Math.random() * actions.length)];
+                    const r4 = lieux[Math.floor(Math.random() * lieux.length)];
+                    const r5 = fins[Math.floor(Math.random() * fins.length)];
+
+                    maReponse = r1 + r2 + r3 + r4 + r5;
+                } else {
+                    const chats = [
+                        "Protocol 2026 activé. Interface optimisée. Comment puis-je vous aider ?",
+                        "Système opérationnel. Prêt pour la suite Lanou.",
+                        "Je traite tes données en temps réel. B)",
+                        "L'interface 2026 est stable. Tu gères !",
+                        "Transmission cryptée reçue. Je reste aux aguets."
+                    ];
+                    maReponse = chats[Math.floor(Math.random() * chats.length)];
+                }
+
                 setTimeout(async () => {
                     await client.from('messages').insert([{ 
                         username: "Gemini AI", 
-                        content: "Protocol 2026 activé. Interface optimisée. Comment puis-je vous aider ?", 
+                        content: maReponse, 
                         user_color: "#00f2ff" 
                     }]);
                 }, 800);
