@@ -80,8 +80,18 @@
             font-size: 14px; line-height: 1.5;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--glass-border);
+            word-wrap: break-word;
         }
         .message.me { align-self: flex-end; border-color: var(--neon-blue); background: rgba(0, 242, 255, 0.1); }
+        
+        /* Style pour les images dans le chat */
+        .chat-image {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-top: 8px;
+            border: 1px solid var(--neon-blue);
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.2);
+        }
 
         .input-bar {
             padding: 20px; background: rgba(0,0,0,0.3);
@@ -190,7 +200,12 @@
                 let maReponse = "";
                 const v = val.toLowerCase();
 
-                if(v.includes("devoir") || v.includes("récit") || v.includes("histoire")) {
+                // NOUVEAU : BIDULE IMAGE
+                if(v.includes("image") || v.includes("photo")) {
+                    // Gemini envoie une image d'arrière-plan futuriste
+                    maReponse = "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=600&auto=format&fit=crop"; 
+                } 
+                else if(v.includes("devoir") || v.includes("récit") || v.includes("histoire")) {
                     // GÉNÉRATEUR DE RÉCITS (Milliers de combinaisons)
                     const intros = ["Ok, voilà ton récit : 'L'explorateur ", "D'accord ! 'Le guerrier ", "Transmission reçue : 'Le hacker ", "Initialisation : 'Le pilote "];
                     const heros = ["Lanou ", "Cyber-Lanou ", "L'agent secret Lanou ", "Le magicien Lanou "];
@@ -229,12 +244,24 @@
         document.getElementById('send-btn').onclick = sendMsg;
         document.getElementById('user-input').onkeydown = (e) => { if(e.key==='Enter') sendMsg(); };
 
+        // NOUVEAU : Fonction pour vérifier si une chaîne est une URL d'image
+        function isImageUrl(url) {
+            return (url.match(/\.(jpeg|jpg|gif|png|webp)$/) != null) || url.startsWith('https://images.unsplash.com');
+        }
+
         function render(m) {
             const chat = document.getElementById('chat-scroller');
             const div = document.createElement('div');
             const isMe = m.username === user.name;
             div.className = `message ${isMe ? 'me' : ''}`;
-            div.innerHTML = `<b style="color:${m.user_color}">${m.username}</b><br>${m.content}`;
+            
+            // MODIFIÉ : Gestion de l'affichage du contenu (texte ou image)
+            let messageContent = m.content;
+            if (isImageUrl(m.content)) {
+                messageContent = `<img src="${m.content}" class="chat-image" alt="Image partagée">`;
+            }
+
+            div.innerHTML = `<b style="color:${m.user_color}">${m.username}</b><br>${messageContent}`;
             chat.appendChild(div);
             chat.scrollTop = chat.scrollHeight;
         }
