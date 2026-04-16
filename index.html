@@ -27,17 +27,16 @@
         <div class="input-area">
             <input type="text" id="msg-input" placeholder="Message...">
         </div>
-    </div>
+    <<script>
+    // 1. Déclare ces variables UNE SEULE FOIS au début
+    const SB_URL = "https://pxyrfrgwvmyflrunpvhl.supabase.co"; 
+    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."; // Ta clé complète
+    const supabase = window.supabase.createClient(SB_URL, SB_KEY); // C'EST CETTE LIGNE QUI EST EN DOUBLE !
 
-    <script>
-        const SB_URL = "https://pxyrfrgwvmyflrunpvhl.supabase.co";
-        const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4eXJmcmd3dm15ZmxydW5wdmhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjg0NDcsImV4cCI6MjA5MTg0NDQ0N30.K6cs-mSRFmQg9gPzjU-GSarMDgAv2AbvBKJj4Nb8plI";
-        const supabase = window.supabase.createClient(SB_URL, SB_KEY);
+    let activeChannel = 'général';
 
-        let activeChannel = 'général';
-
-        async function init() {
-            await loadChannels();
+    // ... la suite du code ...
+</script>
             await loadMessages();
             // Ecoute en temps réel
             supabase.channel('any').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
