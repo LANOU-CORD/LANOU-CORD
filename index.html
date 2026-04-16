@@ -12,53 +12,63 @@
         #messages { flex: 1; padding: 20px; overflow-y: auto; }
         .input-area { padding: 20px; background: #222; }
         input { width: 100%; padding: 10px; background: #000; color: white; border: 1px solid var(--main); border-radius: 5px; }
-        .channel-item { padding: 10px; cursor: pointer; border-radius: 5px; margin-bottom: 5px; }
-        .channel-item:hover { background: #333; }
-        .active { background: var(--main) !important; color: black; }
+        .channel-item { padding: 10px; cursor: pointer; border-radius: 5px; margin-bottom: 5px; color: #aaa; }
+        .channel-item:hover { background: #333; color: white; }
+        .active { background: var(--main) !important; color: black !important; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="sidebar">
-        <h3>Salons</h3>
-        <div id="channels-list">Chargement...</div>
+        <h2 style="color: var(--main)">LANOU-CORD</h2>
+        <div id="channels-list">Chargement des salons...</div>
     </div>
     <div class="main">
         <div id="messages"></div>
         <div class="input-area">
-            <input type="text" id="msg-input" placeholder="Message...">
+            <input type="text" id="msg-input" placeholder="Envoyer un message dans #général...">
         </div>
-    <<script>
-    // 1. Déclare ces variables UNE SEULE FOIS au début
-    const SB_URL = "https://pxyrfrgwvmyflrunpvhl.supabase.co"; 
-    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."; // Ta clé complète
-    const supabase = window.supabase.createClient(SB_URL, SB_KEY); // C'EST CETTE LIGNE QUI EST EN DOUBLE !
+    </div>
 
-    let activeChannel = 'général';
+    <script>
+        const SB_URL = "https://pxyrfrgwvmyflrunpvhl.supabase.co";
+        const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4eXJmcmd3dm15ZmxydW5wdmhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjg0NDcsImV4cCI6MjA5MTg0NDQ0N30.K6cs-mSRFmQg9gPzjU-GSarMDgAv2AbvBKJj4Nb8plI";
+        const supabase = window.supabase.createClient(SB_URL, SB_KEY);
 
-    // ... la suite du code ...
-</script>
+        let activeChannel = 'général';
+
+        async function init() {
+            console.log("Démarrage de LANOU-CORD...");
+            await loadChannels();
             await loadMessages();
-            // Ecoute en temps réel
-            supabase.channel('any').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+            
+            supabase.channel('any').on('postgres_changes', { 
+                event: 'INSERT', 
+                schema: 'public', 
+                table: 'messages' 
+            }, payload => {
                 if(payload.new.channel === activeChannel) renderMessage(payload.new);
             }).subscribe();
         }
 
         async function loadChannels() {
-            const { data } = await supabase.from('channels').select('*');
+            const { data, error } = await supabase.from('channels').select('*');
+            if (error) console.error("Erreur salons:", error);
             const list = document.getElementById('channels-list');
             list.innerHTML = "";
-            data?.forEach(c => {
-                const div = document.createElement('div');
-                div.className = `channel-item ${activeChannel === c.name ? 'active' : ''}`;
-                div.innerText = "# " + c.name;
-                div.onclick = () => { activeChannel = c.name; loadChannels(); loadMessages(); };
-                list.appendChild(div);
-            });
+            if (data) {
+                data.forEach(c => {
+                    const div = document.createElement('div');
+                    div.className = `channel-item ${activeChannel === c.name ? 'active' : ''}`;
+                    div.innerText = "# " + c.name;
+                    div.onclick = () => { activeChannel = c.name; loadChannels(); loadMessages(); };
+                    list.appendChild(div);
+                });
+            }
         }
 
         async function loadMessages() {
-            const { data } = await supabase.from('messages').select('*').eq('channel', activeChannel).order('created_at', {ascending: true});
+            const { data, error } = await supabase.from('messages').select('*').eq('channel', activeChannel).order('created_at', {ascending: true});
+            if (error) console.error("Erreur messages:", error);
             const container = document.getElementById('messages');
             container.innerHTML = "";
             data?.forEach(m => renderMessage(m));
@@ -67,7 +77,8 @@
         function renderMessage(m) {
             const container = document.getElementById('messages');
             const div = document.createElement('div');
-            div.innerHTML = `<b>${m.username}</b>: ${m.content}`;
+            div.style.marginBottom = "8px";
+            div.innerHTML = `<strong style="color:var(--main)">${m.username || 'Anonyme'}</strong>: ${m.content}`;
             container.appendChild(div);
             container.scrollTop = container.scrollHeight;
         }
@@ -76,7 +87,12 @@
             if(e.key === 'Enter' && e.target.value.trim()) {
                 const val = e.target.value;
                 e.target.value = "";
-                await supabase.from('messages').insert([{ username: 'Moi', content: val, channel: activeChannel }]);
+                const { error } = await supabase.from('messages').insert([{ 
+                    username: 'Moi', 
+                    content: val, 
+                    channel: activeChannel 
+                }]);
+                if (error) alert("Erreur d'envoi : " + error.message);
             }
         };
 
