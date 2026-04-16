@@ -2,125 +2,123 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>LANOU-CORD</title>
+    <title>LANOU-CORD Edition</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root {
-            --rbx-blue: #00a2ff;
-            --rbx-green: #02b757;
-            --rbx-bg: #e3e3e3;
-        }
-
         body { 
-            margin: 0; 
-            background: var(--rbx-bg) url('https://www.transparenttextures.com/patterns/cubes.png'); 
-            font-family: 'Trebuchet MS', sans-serif;
-            display: flex; 
-            flex-direction: column;
-            height: 100vh; 
+            margin: 0; padding: 0; background: #e3e3e3; 
+            font-family: 'Verdana', sans-serif;
+            display: flex; flex-direction: column; align-items: center; height: 100vh;
         }
 
-        /* Barre de Navigation Noire */
-        .top-bar {
-            height: 50px;
-            background: #000;
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            color: white;
-            font-weight: bold;
-            font-size: 22px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            letter-spacing: 1px;
+        /* BANNIÈRE AVEC BOUTON DISCORD */
+        #header-banniere {
+            width: 100%; height: 120px;
+            background: linear-gradient(to bottom, #75aadb 0%, #ffffff 100%), url('https://www.transparenttextures.com/patterns/city.png');
+            border-bottom: 3px solid #0055ff;
+            display: flex; position: relative;
+            justify-content: center; align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
-        .container { display: flex; flex: 1; overflow: hidden; }
-
-        /* Sidebar Salons avec bordure bleue */
-        .sidebar { 
-            width: 220px; 
-            background: rgba(255, 255, 255, 0.9); 
-            padding: 20px 10px;
-            border-right: 4px solid var(--rbx-blue);
+        .logo-text {
+            font-size: 42px; font-weight: 900; color: #ff3131;
+            text-shadow: 3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+            letter-spacing: -2px; margin: 0;
         }
 
+        .edition-text {
+            font-size: 18px; color: #0055ff; font-weight: bold;
+            position: absolute; bottom: 15px; transform: rotate(-2deg);
+            background: yellow; padding: 2px 10px; border: 1px solid black;
+        }
+
+        /* LE BOUTON "PLAY NOW" STYLE DISCORD */
+        .discord-btn {
+            position: absolute; right: 20px; top: 20px;
+            background: linear-gradient(to bottom, #3dbd3d 0%, #1d8f1d 100%);
+            border: 2px solid #ffffff; border-radius: 5px;
+            color: white; font-weight: bold; font-size: 14px;
+            padding: 10px 20px; cursor: pointer;
+            text-decoration: none; text-align: center;
+            box-shadow: 0 4px 0 #125a12, 0 6px 10px rgba(0,0,0,0.3);
+            display: flex; flex-direction: column;
+        }
+        .discord-btn:hover { background: linear-gradient(to bottom, #45d445 0%, #22a622 100%); }
+        .discord-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #125a12; }
+        .discord-btn span { font-size: 18px; display: block; }
+
+        /* Conteneur principal */
+        .container { 
+            display: flex; flex: 1; width: 95%; max-width: 1100px;
+            background: white; margin: 20px 0; border-radius: 10px;
+            overflow: hidden; border: 2px solid #555;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+
+        .sidebar { width: 220px; background: #f0f0f0; padding: 20px; border-right: 2px solid #ccc; }
         .channel-btn {
-            background: #fff;
-            border: 2px solid #ccc;
-            border-bottom: 5px solid #bbb;
-            padding: 12px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            text-align: center;
-            font-weight: bold;
-            border-radius: 10px;
-            text-transform: uppercase;
-            transition: all 0.1s;
+            background: #fff; border: 1px solid #999; border-bottom: 3px solid #777;
+            padding: 10px; margin-bottom: 8px; cursor: pointer;
+            font-weight: bold; border-radius: 5px; width: 100%; text-align: center;
         }
+        .channel-btn.active { background: #00a2ff; color: white; border-color: #0055ff; }
 
-        .channel-btn:hover { background: #f9f9f9; }
-        .channel-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
-        .channel-btn.active { background: var(--rbx-blue); color: white; border-color: #0084ff; border-bottom-color: #005ea8; }
-
-        /* Zone de Chat */
         .chat-section { flex: 1; display: flex; flex-direction: column; padding: 20px; }
+        #messages { flex: 1; background: #fff; border: 1px solid #ccc; padding: 15px; overflow-y: auto; border-radius: 5px; }
+        .msg-bubble { margin-bottom: 8px; padding: 8px; border-bottom: 1px dotted #ccc; font-size: 14px; }
 
-        #messages { 
-            flex: 1; 
-            background: white; 
-            border-radius: 15px; 
-            border: 3px solid #ccc;
-            box-shadow: 0 6px 0 #bbb;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .msg-bubble {
-            background: #f1f1f1;
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            border-left: 6px solid var(--rbx-blue);
-            font-size: 15px;
-            animation: pop 0.2s ease-out;
-        }
-
-        @keyframes pop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-        /* Input et Bouton Envoyer */
-        .input-box {
-            margin-top: 25px;
-            display: flex;
-            gap: 12px;
-        }
-
-        input { 
-            flex: 1; 
-            padding: 15px; 
-            border-radius: 12px; 
-            border: 3px solid #ccc; 
-            font-size: 16px;
-            font-weight: bold;
-            outline: none;
-        }
-
+        .input-box { margin-top: 15px; display: flex; gap: 10px; }
+        input { flex: 1; padding: 12px; border: 2px solid #ccc; border-radius: 5px; }
         .send-btn {
-            background: var(--rbx-green);
-            color: white;
-            border: none;
-            border-bottom: 6px solid #018e43;
-            padding: 0 35px;
-            border-radius: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.1s;
+            background: #02b757; color: white; border: none;
+            border-bottom: 4px solid #01853e; padding: 0 25px;
+            border-radius: 5px; font-weight: bold; cursor: pointer;
         }
-
-        .send-btn:hover { background: #03cf63; }
-        .send-btn:active { transform: translateY(3px); border-bottom-width: 2px; }
     </style>
 </head>
 <body>
 
-<div class="top-bar
+    <div id="header-banniere">
+        <h1 class="logo-text">LANOU-CORD</h1>
+        <div class="edition-text">EDITION 2026</div>
+
+        <a href="TON_LIEN_DISCORD_ICI" target="_blank" class="discord-btn">
+            REJOINDRE<span>DISCORD</span>
+        </a>
+    </div>
+
+    <div class="container">
+        <div class="sidebar">
+            <div style="font-weight:bold; margin-bottom:15px; text-align:center;">SALONS</div>
+            <div id="channel-list"></div>
+        </div>
+
+        <div class="chat-section">
+            <div id="messages"></div>
+            <div class="input-box">
+                <input type="text" id="msg-input" placeholder="Ecrire un message...">
+                <button class="send-btn" id="send-trigger">ENVOYER</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const SB_URL = "https://pxyrfrgwvmyflrunpvhl.supabase.co";
+    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4eXJmcmd3dm15ZmxydW5wdmhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjg0NDcsImV4cCI6MjA5MTg0NDQ0N30.K6cs-mSRFmQg9gPzjU-GSarMDgAv2AbvBKJj4Nb8plI";
+    const supabase = window.supabase.createClient(SB_URL, SB_KEY);
+
+    let currentChannel = 'général';
+    let myUser = prompt("Ton pseudo :") || "Guest" + Math.floor(Math.random()*999);
+
+    async function init() {
+        await loadChannels();
+        await loadMessages();
+        supabase.channel('classe_chat').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, p => {
+            if(p.new.channel === currentChannel) renderMessage(p.new);
+        }).subscribe();
+    }
+
+    async function loadChannels() {
+        const { data } = await supabase.from('channels').select('*');
+        const list = document.
