@@ -3,261 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LANOU-CORD | TITAN EDITION</title>
+    <title>LANOU-CORD FIX</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
 
     <style>
-        :root {
-            --primary: #00a2ff;
-            --secondary: #ff3131;
-            --bg: #121212;
-            --panel: #1e1e1e;
-            --text: #ffffff;
-        }
-
-        * { box-sizing: border-box; }
-        body {
-            margin: 0; padding: 0; font-family: 'Inter', sans-serif;
-            background: var(--bg); color: var(--text);
-            height: 100vh; display: flex; flex-direction: column; overflow: hidden;
-        }
-
-        /* --- HEADER --- */
-        header {
-            height: 80px; background: #000; border-bottom: 3px solid var(--primary);
-            display: flex; align-items: center; justify-content: space-between; padding: 0 20px;
-            z-index: 100; flex-shrink: 0;
-        }
-
-        .logo { font-family: 'Bungee'; color: var(--primary); font-size: 28px; text-shadow: 2px 2px 0 var(--secondary); }
-
-        .nav-btns { display: flex; gap: 12px; }
+        :root { --primary: #00a2ff; --bg: #121212; --panel: #1e1e1e; --text: #fff; }
+        body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        button, .btn-link {
-            padding: 12px 18px; border-radius: 8px; border: none;
-            font-weight: 900; cursor: pointer; text-decoration: none;
-            background: #333; color: white; font-size: 14px;
-            transition: transform 0.1s, background 0.2s;
-        }
+        header { height: 70px; background: #000; border-bottom: 3px solid var(--primary); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
+        .logo { font-family: 'Bungee'; color: var(--primary); font-size: 24px; }
+        
+        .btn { padding: 10px 15px; border-radius: 5px; border: none; font-weight: bold; cursor: pointer; color: white; background: #333; }
+        .btn-send { background: #02b757; }
+        
+        .main { display: flex; flex: 1; overflow: hidden; padding: 10px; gap: 10px; }
+        aside { width: 200px; background: var(--panel); border-radius: 10px; padding: 15px; }
+        section { flex: 1; background: var(--panel); border-radius: 10px; display: flex; flex-direction: column; overflow: hidden; }
+        
+        #chat-output { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .msg { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; border-left: 3px solid var(--primary); }
+        
+        .input-zone { padding: 15px; background: #252525; display: flex; gap: 10px; }
+        input { flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #444; background: #111; color: white; }
 
-        button:active { transform: scale(0.95); }
-        .btn-settings { background: #444; border-bottom: 4px solid #222; }
-        .btn-discord { background: #5865F2 !important; border-bottom: 4px solid #3e49b1; }
-        .btn-send { background: #02b757 !important; border-bottom: 4px solid #01853e; width: 120px; }
-
-        /* --- LAYOUT --- */
-        .wrapper {
-            display: flex; flex: 1; overflow: hidden; padding: 15px; gap: 15px;
-        }
-
-        aside {
-            width: 280px; background: var(--panel); border-radius: 15px; padding: 20px;
-            display: flex; flex-direction: column; gap: 20px; border: 2px solid #333;
-        }
-
-        /* --- CHAT ENGINE --- */
-        main {
-            flex: 1; background: var(--panel); border-radius: 15px;
-            display: flex; flex-direction: column; overflow: hidden; border: 2px solid #333;
-        }
-
-        #chat-box {
-            flex: 1; padding: 20px; overflow-y: auto;
-            display: flex; flex-direction: column; gap: 12px;
-            background: rgba(0,0,0,0.2);
-        }
-
-        .msg {
-            background: rgba(255,255,255,0.05); padding: 12px; border-radius: 10px;
-            animation: fadeIn 0.3s ease; line-height: 1.5; border-left: 4px solid var(--primary);
-        }
-
-        .input-bar {
-            padding: 20px; background: #252525; display: flex; gap: 12px; border-top: 2px solid #333;
-        }
-
-        #msg-input {
-            flex: 1; padding: 15px; border-radius: 8px; border: 2px solid #444;
-            background: #111; color: white; font-size: 16px; font-weight: 600;
-        }
-
-        /* --- MODAL PARAMETRES (FIXÉ) --- */
-        #modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); display: none; 
-            justify-content: center; align-items: center; z-index: 9999;
-        }
-        .modal-content {
-            background: #222; padding: 35px; border-radius: 20px; 
-            border: 3px solid var(--primary); width: 350px; text-align: center;
-        }
-
-        .xp-bar { width: 100%; height: 10px; background: #333; border-radius: 5px; margin-top: 10px; overflow: hidden; }
-        #xp-progress { height: 100%; background: var(--primary); width: 0%; transition: width 0.3s; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        #modal-settings { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-box { background: #222; padding: 30px; border-radius: 15px; border: 2px solid var(--primary); width: 300px; text-align: center; }
     </style>
 </head>
 <body>
 
-    <div id="modal">
-        <div class="modal-content">
-            <h2 style="font-family: 'Bungee'; margin-bottom: 25px;">CONFIG</h2>
-            <div style="text-align: left; margin-bottom: 20px;">
-                <label>Couleur du Pseudo :</label>
-                <input type="color" id="set-color" style="width:100%; height:45px; margin-top:5px; cursor:pointer;">
-            </div>
-            <div style="text-align: left; margin-bottom: 25px;">
-                <label>Ton Avatar :</label>
-                <select id="set-avatar" style="width:100%; padding:12px; margin-top:5px; border-radius:5px; background:#333; color:white;">
-                    <option value="👤">👤 Normal</option>
-                    <option value="👑">👑 VIP</option>
-                    <option value="🤖">🤖 Robot</option>
-                    <option value="🥓">🥓 Bacon</option>
-                </select>
-            </div>
-            <button onclick="saveSettings()" style="width:100%; background:var(--primary); padding:15px;">SAUVEGARDER</button>
+    <div id="modal-settings">
+        <div class="modal-box">
+            <h3>RÉGLAGES</h3>
+            <input type="color" id="user-color-pick" style="width:100%; height:40px; margin: 10px 0;">
+            <button class="btn" style="width:100%" onclick="closeSettings()">OK</button>
         </div>
     </div>
 
     <header>
         <div class="logo">LANOU-CORD</div>
-        <div class="nav-btns">
-            <button class="btn-settings" onclick="openModal()">⚙️ RÉGLAGES</button>
-            <a href="https://discord.gg/6Zq7GKypYy" target="_blank" class="btn-link btn-discord">DISCORD</a>
+        <div>
+            <button class="btn" onclick="openSettings()">⚙️</button>
+            <a href="https://discord.gg/6Zq7GKypYy" target="_blank" style="text-decoration:none" class="btn">DISCORD</a>
         </div>
     </header>
 
-    <div class="wrapper">
+    <div class="main">
         <aside>
-            <div style="text-align:center; padding-bottom: 20px; border-bottom: 1px solid #333;">
-                <div id="p-avatar" style="font-size:60px; margin-bottom:10px;">👤</div>
-                <b id="p-name" style="font-size:22px; display:block;">Joueur</b>
-                <div id="p-lvl" style="color:var(--primary); font-weight:bold; margin-top:5px;">Niveau 1</div>
-                <div class="xp-bar"><div id="xp-progress"></div></div>
-            </div>
-            <div style="font-size:12px; color:gray; line-height:1.6;">
-                <b>SYSTÈME :</b><br>
-                > Version 3.0 Titan<br>
-                > Supabase Connecté<br>
-                > Anti-Spam Actif
-            </div>
+            <b id="display-name">...</b>
+            <div id="display-lvl" style="font-size: 12px; color: var(--primary);">Niveau 1</div>
         </aside>
-
-        <main>
-            <div id="chat-box"></div>
-            <div class="input-bar">
-                <input type="text" id="msg-input" placeholder="Tape ton message ici..." maxlength="200">
-                <button class="btn-send" onclick="send()">ENVOYER</button>
+        <section>
+            <div id="chat-output"></div>
+            <div class="input-zone">
+                <input type="text" id="chat-input" placeholder="Message...">
+                <button class="btn btn-send" onclick="handleSend()">ENVOYER</button>
             </div>
-        </main>
+        </section>
     </div>
 
     <script>
-        // --- CONNEXION SUPABASE ---
-        const SB_URL = "https://pxyrfrgwvmyflrunpvhl.supabase.co";
-        const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4eXJmcmd3dm15ZmxydW5wdmhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjg0NDcsImV4cCI6MjA5MTg0NDQ0N30.K6cs-mSRFmQg9gPzjU-GSarMDgAv2AbvBKJj4Nb8plI";
-        const supabase = window.supabase.createClient(SB_URL, SB_KEY);
-
-        // --- DONNÉES UTILISATEUR ---
-        let myUser = {
-            name: localStorage.getItem('ln_name') || prompt("Ton pseudo ?") || "Guest",
-            color: localStorage.getItem('ln_color') || "#00a2ff",
-            avatar: localStorage.getItem('ln_avatar') || "👤",
-            xp: parseInt(localStorage.getItem('ln_xp')) || 0,
-            lvl: parseInt(localStorage.getItem('ln_lvl')) || 1
-        };
-
-        // Sauvegarde initiale
-        localStorage.setItem('ln_name', myUser.name);
-
-        // --- FONCTIONS INTERFACE ---
-        function openModal() { document.getElementById('modal').style.display = 'flex'; }
+        // ON UTILISE DES NOMS DE VARIABLES UNIQUES POUR EVITER LES ERREURS
+        const PROJECT_URL = "https://pxyrfrgwvmyflrunpvhl.supabase.co";
+        const PROJECT_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4eXJmcmd3dm15ZmxydW5wdmhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjg0NDcsImV4cCI6MjA5MTg0NDQ0N30.K6cs-mSRFmQg9gPzjU-GSarMDgAv2AbvBKJj4Nb8plI";
         
-        function saveSettings() {
-            myUser.color = document.getElementById('set-color').value;
-            myUser.avatar = document.getElementById('set-avatar').value;
-            
-            localStorage.setItem('ln_color', myUser.color);
-            localStorage.setItem('ln_avatar', myUser.avatar);
-            
-            updateProfileUI();
-            document.getElementById('modal').style.display = 'none';
+        // Initialisation unique
+        const clientSupabase = window.supabase.createClient(PROJECT_URL, PROJECT_KEY);
+
+        let currentUser = {
+            name: localStorage.getItem('lanou_user') || prompt("Pseudo ?") || "Anonyme",
+            color: localStorage.getItem('lanou_color') || "#00a2ff"
+        };
+        localStorage.setItem('lanou_user', currentUser.name);
+
+        document.getElementById('display-name').innerText = currentUser.name;
+        document.getElementById('display-name').style.color = currentUser.color;
+
+        // --- FONCTIONS ---
+        function openSettings() { document.getElementById('modal-settings').style.display = 'flex'; }
+        
+        function closeSettings() {
+            currentUser.color = document.getElementById('user-color-pick').value;
+            localStorage.setItem('lanou_color', currentUser.color);
+            document.getElementById('display-name').style.color = currentUser.color;
+            document.getElementById('modal-settings').style.display = 'none';
         }
 
-        function updateProfileUI() {
-            document.getElementById('p-avatar').innerText = myUser.avatar;
-            document.getElementById('p-name').innerText = myUser.name;
-            document.getElementById('p-name').style.color = myUser.color;
-            document.getElementById('p-lvl').innerText = "Niveau " + myUser.lvl;
-            document.getElementById('xp-progress').style.width = myUser.xp + "%";
-        }
+        async function handleSend() {
+            const input = document.getElementById('chat-input');
+            const val = input.value.trim();
+            if(!val) return;
+            input.value = "";
 
-        // --- LOGIQUE CHAT ---
-        async function send() {
-            const inp = document.getElementById('msg-input');
-            const txt = inp.value.trim();
-            if(!txt) return;
-
-            inp.value = ""; // Vide immédiatement le champ
-
-            const { error } = await supabase.from('messages').insert([
-                { 
-                    username: myUser.name, 
-                    content: txt, 
-                    user_color: myUser.color,
-                    avatar: myUser.avatar
-                }
+            const { error } = await clientSupabase.from('messages').insert([
+                { username: currentUser.name, content: val, user_color: currentUser.color }
             ]);
-
-            if(error) {
-                console.error(error);
-            } else {
-                gainXP(10);
-            }
+            if(error) console.error("Erreur d'envoi", error);
         }
 
-        function gainXP(amount) {
-            myUser.xp += amount;
-            if(myUser.xp >= 100) {
-                myUser.xp = 0;
-                myUser.lvl++;
-                alert("BRAVO ! Tu passes niveau " + myUser.lvl);
-            }
-            localStorage.setItem('ln_xp', myUser.xp);
-            localStorage.setItem('ln_lvl', myUser.lvl);
-            updateProfileUI();
-        }
-
-        function addMsgToUI(m) {
-            const box = document.getElementById('chat-box');
+        function renderMessage(m) {
+            const out = document.getElementById('chat-output');
             const div = document.createElement('div');
             div.className = "msg";
-            div.innerHTML = `<span style="color:${m.user_color || '#00a2ff'}"><b>${m.username}</b></span>: ${m.content}`;
-            box.appendChild(div);
-            box.scrollTop = box.scrollHeight;
+            div.innerHTML = `<b style="color:${m.user_color}">${m.username}</b>: ${m.content}`;
+            out.appendChild(div);
+            out.scrollTop = out.scrollHeight;
         }
 
-        // --- DÉMARRAGE ---
-        async function start() {
-            updateProfileUI();
+        // --- LANCEMENT ---
+        async function boot() {
+            // Charger les messages existants
+            const { data } = await clientSupabase.from('messages').select('*').order('created_at', {ascending: true}).limit(50);
+            if(data) data.forEach(msg => renderMessage(msg));
 
-            // Charger les 50 derniers messages
-            const { data } = await supabase.from('messages').select('*').order('created_at', {ascending: true}).limit(50);
-            if(data) data.forEach(m => addMsgToUI(m));
-
-            // Temps réel : Écouter les nouveaux messages
-            supabase.channel('global').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, p => {
-                addMsgToUI(p.new);
+            // Ecouter le temps réel
+            clientSupabase.channel('any').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+                renderMessage(payload.new);
             }).subscribe();
         }
 
-        // Envoyer avec la touche "Entrée"
-        document.getElementById('msg-input').onkeydown = (e) => { if(e.key === 'Enter') send(); };
-
-        start();
+        document.getElementById('chat-input').onkeydown = (e) => { if(e.key === 'Enter') handleSend(); };
+        
+        boot();
     </script>
 </body>
 </html>
