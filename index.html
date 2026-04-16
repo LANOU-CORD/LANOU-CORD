@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LANOU-CORD 2026 | News Edition</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00f2ff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
@@ -52,19 +58,36 @@
         }
 
         .main-layout { display: flex; flex: 1; overflow: hidden; }
+
         aside { width: 200px; background: rgba(0, 0, 0, 0.2); border-right: 1px solid var(--glass-border); padding: 20px; }
-        .contact-card { background: rgba(255, 255, 255, 0.05); padding: 10px; border-radius: 12px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; border: 1px solid transparent; }
+        
+        .contact-card {
+            background: rgba(255, 255, 255, 0.05); padding: 10px; border-radius: 12px; margin-bottom: 10px;
+            display: flex; align-items: center; gap: 10px; border: 1px solid transparent;
+        }
         .status { width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 5px currentColor; }
 
-        #chat-scroller { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; scroll-behavior: smooth; }
+        #chat-scroller { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
 
-        .message { max-width: 75%; padding: 12px 16px; border-radius: 15px; font-size: 14px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); }
+        .message {
+            max-width: 75%; padding: 12px 16px; border-radius: 15px; font-size: 14px;
+            background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border);
+        }
         .message.me { align-self: flex-end; border-color: var(--neon-blue); background: rgba(0, 242, 255, 0.08); }
+
         .chat-image { max-width: 100%; border-radius: 10px; margin-top: 8px; border: 1px solid var(--neon-blue); }
 
         .input-bar { padding: 20px; background: rgba(0,0,0,0.3); display: flex; gap: 10px; }
-        input, select { flex: 1; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); border-radius: 10px; padding: 12px; color: white; outline: none; }
-        .btn-send { background: var(--neon-blue); border: none; border-radius: 10px; padding: 0 20px; font-weight: bold; cursor: pointer; color: #000; transition: 0.3s; }
+
+        input, select {
+            flex: 1; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border);
+            border-radius: 10px; padding: 12px; color: white; outline: none;
+        }
+
+        .btn-send {
+            background: var(--neon-blue); border: none; border-radius: 10px;
+            padding: 0 20px; font-weight: bold; cursor: pointer; color: #000; transition: 0.3s;
+        }
 
         #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 1000; }
         .modal-content { background: #001a33; border: 1px solid var(--neon-blue); padding: 30px; border-radius: 20px; width: 300px; text-align: center; }
@@ -79,7 +102,7 @@
 
     <div class="news-container">
         <div class="news-track" id="news-bar">
-            <span class="news-label">MISE À JOUR</span> Style néon rétabli — Messages programmés actifs — Commandes /supprimé et /news prêtes — Bonne discussion ! —
+            <span class="news-label">DIRECT</span> BIENVENUE ADMIN LANOU — SYSTÈME DE NEWS OPÉRATIONNEL — TAPE /NEWS POUR CHANGER CE TEXTE — 
         </div>
     </div>
 
@@ -122,6 +145,11 @@
         const client = window.supabase.createClient(SB_URL, SB_KEY);
         const notifySound = new Audio('https://raw.githubusercontent.com/rafaelreis-hotmart/Audio-Notification/master/notification.mp3');
 
+        // AJOUT : SERVICE WORKER
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(() => {});
+        }
+
         let user = {
             name: localStorage.getItem('u_2026') || "Cyber_User",
             theme: localStorage.getItem('t_2026') || "theme-blue"
@@ -147,16 +175,10 @@
             input.value = "";
 
             const cmd = val.toLowerCase();
-            
-            // --- RÉPARATION COMMANDE SUPPRIMER ---
             if(cmd === "/supprimé" || cmd === "/supprime") {
-                if(confirm("🚨 Lanou, purger l'historique sur le serveur ?")) {
-                    const { error } = await client.from('messages').delete().neq('id', 0);
-                    if(!error) {
-                        document.getElementById('chat-scroller').innerHTML = "";
-                    } else {
-                        alert("Erreur de suppression : Vérifie tes droits sur Supabase !");
-                    }
+                if(confirm("🚨 Purger l'historique ?")) {
+                    const { error } = await client.from('messages').delete().not('id', 'is', null);
+                    if(!error) document.getElementById('chat-scroller').innerHTML = "";
                 }
                 return;
             }
@@ -195,21 +217,10 @@
             if(!isMe) notifySound.play().catch(() => {});
         }
 
-        // --- RÉPARATION CHARGEMENT ET REALTIME ---
         async function load() {
-            const { data, error } = await client.from('messages').select('*').order('created_at', {ascending: true}).limit(50);
-            if(data) {
-                document.getElementById('chat-scroller').innerHTML = "";
-                data.forEach(render);
-            }
-
-            // Écoute sécurisée
-            client.channel('any')
-                .on('postgres_changes', { event:'INSERT', schema:'public', table:'messages' }, p => render(p.new))
-                .on('postgres_changes', { event:'DELETE', schema:'public', table:'messages' }, () => {
-                    document.getElementById('chat-scroller').innerHTML = "";
-                })
-                .subscribe();
+            const { data } = await client.from('messages').select('*').order('created_at', {ascending: true}).limit(50);
+            if(data) data.forEach(render);
+            client.channel('any').on('postgres_changes', { event:'INSERT', schema:'public', table:'messages' }, p => render(p.new)).subscribe();
         }
         load();
     </script>
