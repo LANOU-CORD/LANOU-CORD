@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>ROBLOX-CORD 2026</title>
+    <title>LANOU-CORD</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
@@ -20,7 +20,7 @@
             height: 100vh; 
         }
 
-        /* Barre de Navigation */
+        /* Barre de Navigation Noire */
         .top-bar {
             height: 50px;
             background: #000;
@@ -29,14 +29,14 @@
             padding: 0 20px;
             color: white;
             font-weight: bold;
-            font-size: 20px;
+            font-size: 22px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            letter-spacing: 1px;
         }
 
-        /* Layout */
         .container { display: flex; flex: 1; overflow: hidden; }
 
-        /* Sidebar Salons */
+        /* Sidebar Salons avec bordure bleue */
         .sidebar { 
             width: 220px; 
             background: rgba(255, 255, 255, 0.9); 
@@ -55,12 +55,14 @@
             font-weight: bold;
             border-radius: 10px;
             text-transform: uppercase;
+            transition: all 0.1s;
         }
 
+        .channel-btn:hover { background: #f9f9f9; }
         .channel-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
         .channel-btn.active { background: var(--rbx-blue); color: white; border-color: #0084ff; border-bottom-color: #005ea8; }
 
-        /* Chat */
+        /* Zone de Chat */
         .chat-section { flex: 1; display: flex; flex-direction: column; padding: 20px; }
 
         #messages { 
@@ -80,9 +82,12 @@
             margin-bottom: 10px;
             border-left: 6px solid var(--rbx-blue);
             font-size: 15px;
+            animation: pop 0.2s ease-out;
         }
 
-        /* Zone d'envoi */
+        @keyframes pop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* Input et Bouton Envoyer */
         .input-box {
             margin-top: 25px;
             display: flex;
@@ -96,6 +101,7 @@
             border: 3px solid #ccc; 
             font-size: 16px;
             font-weight: bold;
+            outline: none;
         }
 
         .send-btn {
@@ -108,87 +114,13 @@
             font-weight: bold;
             cursor: pointer;
             font-size: 16px;
+            transition: all 0.1s;
         }
 
+        .send-btn:hover { background: #03cf63; }
         .send-btn:active { transform: translateY(3px); border-bottom-width: 2px; }
     </style>
 </head>
 <body>
 
-<div class="top-bar">ROBLOX-CORD <span style="color: var(--rbx-blue); margin-left: 5px;">2026</span></div>
-
-<div class="container">
-    <div class="sidebar">
-        <div id="channel-list"></div>
-    </div>
-
-    <div class="chat-section">
-        <div id="messages"></div>
-        <div class="input-box">
-            <input type="text" id="msg-input" placeholder="Dire quelque chose...">
-            <button class="send-btn" id="send-trigger">ENVOYER</button>
-        </div>
-    </div>
-</div>
-
-<script>
-    const SB_URL = "https://pxyrfrgwvmyflrunpvhl.supabase.co";
-    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4eXJmcmd3dm15ZmxydW5wdmhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjg0NDcsImV4cCI6MjA5MTg0NDQ0N30.K6cs-mSRFmQg9gPzjU-GSarMDgAv2AbvBKJj4Nb8plI";
-    const supabase = window.supabase.createClient(SB_URL, SB_KEY);
-
-    let currentChannel = 'général';
-    let myUser = prompt("Nom d'utilisateur :") || "Guest" + Math.floor(Math.random()*999);
-
-    async function init() {
-        await loadChannels();
-        await loadMessages();
-        supabase.channel('rbx').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, p => {
-            if(p.new.channel === currentChannel) renderMessage(p.new);
-        }).subscribe();
-    }
-
-    async function loadChannels() {
-        const { data } = await supabase.from('channels').select('*');
-        const list = document.getElementById('channel-list');
-        list.innerHTML = "";
-        data?.forEach(ch => {
-            const div = document.createElement('div');
-            div.className = `channel-btn ${currentChannel === ch.name ? 'active' : ''}`;
-            div.innerText = ch.name;
-            div.onclick = () => { currentChannel = ch.name; loadChannels(); loadMessages(); };
-            list.appendChild(div);
-        });
-    }
-
-    async function loadMessages() {
-        const { data } = await supabase.from('messages').select('*').eq('channel', currentChannel).order('created_at', {ascending: true});
-        const container = document.getElementById('messages');
-        container.innerHTML = "";
-        data?.forEach(m => renderMessage(m));
-    }
-
-    function renderMessage(m) {
-        const container = document.getElementById('messages');
-        const div = document.createElement('div');
-        div.className = "msg-bubble";
-        div.innerHTML = `<span style="color:var(--rbx-blue); font-weight:bold;">${m.username}:</span> ${m.content}`;
-        container.appendChild(div);
-        container.scrollTop = container.scrollHeight;
-    }
-
-    async function send() {
-        const inp = document.getElementById('msg-input');
-        if(inp.value.trim()) {
-            const val = inp.value;
-            inp.value = "";
-            await supabase.from('messages').insert([{ username: myUser, content: val, channel: currentChannel }]);
-        }
-    }
-
-    document.getElementById('send-trigger').onclick = send;
-    document.getElementById('msg-input').onkeydown = (e) => { if(e.key === 'Enter') send(); };
-    init();
-</script>
-
-</body>
-</html>
+<div class="top-bar
