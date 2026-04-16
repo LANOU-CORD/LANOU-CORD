@@ -3,109 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LANOU-CORD 2010</title>
+    <title>LANOU-CORD 2026 | Future Edition</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* STYLE ROBLOX CLASSIQUE */
-        body { 
-            margin: 0; padding: 0; 
-            font-family: 'Tahoma', sans-serif; 
-            background: radial-gradient(circle, #4A76A8 0%, #2a4d77 100%); 
-            height: 100vh; display: flex; flex-direction: column; align-items: center; 
+        /* DESIGN FUTURISTE 2026 */
+        :root {
+            --neon-blue: #00f2ff;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
         }
 
-        /* BARRE DE MENU HAUT */
-        header { 
-            background: linear-gradient(to bottom, #eeeeee, #cccccc); 
-            width: 100%; height: 35px; border-bottom: 2px solid #555;
-            display: flex; align-items: center; justify-content: space-between; padding: 0 15px; box-sizing: border-box;
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background: radial-gradient(circle at center, #001a33 0%, #00050a 100%);
+            color: white; height: 100vh;
+            display: flex; flex-direction: column; align-items: center;
+            overflow: hidden;
         }
-        .rbx-logo { font-weight: bold; font-style: italic; color: #CC0000; text-shadow: 1px 1px white; }
 
-        /* CONTENEUR CENTRAL (FENÊTRE DE JEU) */
-        .app-window {
-            margin-top: 50px;
-            width: 700px; height: 500px;
-            background: #D4D0C8; /* Gris Windows/Roblox 2010 */
-            border: 3px solid #848484;
-            border-right-color: #404040; border-bottom-color: #404040;
+        /* BARRE DE NAVIGATION NEON */
+        header {
+            width: 100%; height: 50px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--neon-blue);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; box-sizing: border-box;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
+        }
+
+        .logo {
+            font-weight: 900; font-size: 20px; letter-spacing: 2px;
+            text-transform: uppercase; color: var(--neon-blue);
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        /* APPLICATION GLASSMORPHISM */
+        .app-container {
+            margin-top: 40px;
+            width: 850px; height: 550px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
             display: flex; flex-direction: column;
-            box-shadow: 10px 10px 20px rgba(0,0,0,0.5);
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
         }
 
-        .title-bar { 
-            background: #000080; color: white; padding: 4px 8px; font-weight: bold; font-size: 13px;
-            display: flex; justify-content: space-between;
+        .main-layout { display: flex; flex: 1; overflow: hidden; }
+
+        /* LISTE CONTACTS FUTURISTE */
+        aside {
+            width: 220px; background: rgba(0, 0, 0, 0.2);
+            border-right: 1px solid var(--glass-border);
+            padding: 20px;
         }
 
-        .main-content { display: flex; flex: 1; padding: 5px; gap: 5px; overflow: hidden; }
-
-        /* PANNEAU GAUCHE */
-        aside { width: 180px; background: white; border: 2px inset #fff; display: flex; flex-direction: column; }
-        .list-header { background: #848484; color: white; font-size: 11px; padding: 3px; font-weight: bold; }
-        .contacts { flex: 1; padding: 5px; font-size: 12px; }
-        .user-item { display: flex; align-items: center; gap: 5px; margin-bottom: 5px; }
-        .online { width: 8px; height: 8px; border-radius: 50%; background: #00ff00; border: 1px solid #000; }
-
-        /* CHAT */
-        main { flex: 1; background: white; border: 2px inset #fff; display: flex; flex-direction: column; }
-        #chat-scroller { flex: 1; padding: 10px; overflow-y: auto; font-size: 13px; background: #fff; }
-        .msg { margin-bottom: 5px; border-bottom: 1px solid #f0f0f0; padding-bottom: 2px; }
-
-        /* INPUT */
-        .input-box { background: #D4D0C8; padding: 8px; display: flex; gap: 5px; border-top: 1px solid #848484; }
-        input { flex: 1; border: 2px inset #fff; padding: 4px; font-size: 13px; }
-
-        .btn { 
-            background: #D4D0C8; border: 2px solid; border-color: #fff #848484 #848484 #fff;
-            padding: 3px 10px; cursor: pointer; font-size: 12px; font-weight: bold;
+        .contact-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px; border-radius: 12px; margin-bottom: 10px;
+            display: flex; align-items: center; gap: 10px;
+            border: 1px solid transparent; transition: 0.3s;
         }
-        .btn:active { border-color: #848484 #fff #fff #848484; }
+        .contact-card:hover { border-color: var(--neon-blue); background: rgba(0, 242, 255, 0.1); }
 
-        /* MODAL SETTINGS */
-        #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; justify-content: center; align-items: center; }
-        .dialog { background: #D4D0C8; border: 2px solid #fff; border-right-color: #404040; border-bottom-color: #404040; padding: 15px; width: 250px; }
+        .status { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 5px currentColor; }
+
+        /* ZONE DE CHAT */
+        main { flex: 1; display: flex; flex-direction: column; }
+
+        #chat-scroller {
+            flex: 1; padding: 20px; overflow-y: auto;
+            display: flex; flex-direction: column; gap: 12px;
+        }
+
+        .message {
+            max-width: 80%; padding: 12px 16px; border-radius: 15px;
+            font-size: 14px; line-height: 1.5;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+        }
+        .message.me { align-self: flex-end; border-color: var(--neon-blue); background: rgba(0, 242, 255, 0.1); }
+
+        /* INPUT BAR */
+        .input-bar {
+            padding: 20px; background: rgba(0,0,0,0.3);
+            display: flex; gap: 10px;
+        }
+
+        input {
+            flex: 1; background: rgba(255,255,255,0.1);
+            border: 1px solid var(--glass-border); border-radius: 10px;
+            padding: 12px; color: white; outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: var(--neon-blue); box-shadow: 0 0 10px rgba(0, 242, 255, 0.2); }
+
+        .btn-send {
+            background: var(--neon-blue); border: none; border-radius: 10px;
+            padding: 0 20px; font-weight: bold; cursor: pointer;
+            color: #000; transition: 0.3s;
+        }
+        .btn-send:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--neon-blue); }
+
+        /* MODAL MODERNE */
+        #modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+            display: none; justify-content: center; align-items: center; z-index: 1000;
+        }
+        .modal-content {
+            background: #001a33; border: 1px solid var(--neon-blue);
+            padding: 30px; border-radius: 20px; width: 300px;
+            text-align: center; box-shadow: 0 0 30px var(--neon-blue);
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="rbx-logo">ROBLOX</div>
-        <button class="btn" onclick="openCfg()">Propriétés</button>
+        <div class="logo">LANOU-CORD <span style="font-weight: 200;">2026</span></div>
+        <button class="btn-send" style="padding: 5px 15px;" onclick="openSettings()">PROPRIÉTÉS</button>
     </header>
 
-    <div class="app-window">
-        <div class="title-bar"><span>LANOU-CORD v2.10</span><button style="background:red; color:white; border:1px solid white; cursor:pointer;">X</button></div>
-        
-        <div class="main-content">
+    <div class="app-container">
+        <div class="main-layout">
             <aside>
-                <div class="list-header">Contacts</div>
-                <div class="contacts">
-                    <div class="user-item"><div class="online"></div> <b>LANOU (Admin)</b></div>
-                    <div class="user-item"><div class="online" style="background:#00a2ff"></div> <b>GeminiBot</b></div>
-                    <hr>
-                    <div id="friends"></div>
-                    <button class="btn" style="width:100%" onclick="addF()">+ Ajouter</button>
+                <h3 style="font-size: 12px; color: var(--neon-blue); margin-bottom: 20px;">CHANNELS</h3>
+                <div class="contact-card">
+                    <div class="status" style="color: #00ff88; background: #00ff88;"></div>
+                    <span>LANOU (Admin)</span>
+                </div>
+                <div class="contact-card">
+                    <div class="status" style="color: var(--neon-blue); background: var(--neon-blue);"></div>
+                    <span>Gemini AI</span>
                 </div>
             </aside>
 
             <main>
                 <div id="chat-scroller"></div>
-                <div class="input-box">
-                    <input type="text" id="msg-input" placeholder="Ecrivez un message...">
-                    <button class="btn" id="send-btn">Envoyer</button>
+                <div class="input-bar">
+                    <input type="text" id="user-input" placeholder="Transmission cryptée...">
+                    <button class="btn-send" id="send-btn">ENVOYER</button>
                 </div>
             </main>
         </div>
     </div>
 
     <div id="modal">
-        <div class="dialog">
-            <b>Paramètres</b><hr>
-            Pseudo:<br><input type="text" id="new-name" style="width:100%"><br><br>
-            Couleur:<br><input type="color" id="new-color" style="width:100%"><br><br>
-            <button class="btn" onclick="saveCfg()">OK</button>
-            <button class="btn" onclick="closeCfg()">Annuler</button>
+        <div class="modal-content">
+            <h2 style="color: var(--neon-blue);">INTERFACE ID</h2>
+            <input type="text" id="new-name" placeholder="Nouveau Pseudo" style="width: 100%; margin-bottom: 10px;">
+            <input type="color" id="new-color" style="width: 100%; height: 40px; border-radius: 5px; margin-bottom: 20px;">
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-send" style="flex: 1;" onclick="saveSettings()">OK</button>
+                <button class="btn-send" style="flex: 1; background: #555; color: white;" onclick="closeSettings()">ANNULER</button>
+            </div>
         </div>
     </div>
 
@@ -114,60 +167,61 @@
         const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4eXJmcmd3dm15ZmxydW5wdmhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjg0NDcsImV4cCI6MjA5MTg0NDQ0N30.K6cs-mSRFmQg9gPzjU-GSarMDgAv2AbvBKJj4Nb8plI";
         const client = window.supabase.createClient(SB_URL, SB_KEY);
 
-        let my = {
-            name: localStorage.getItem('u_name') || "Anonyme",
-            color: localStorage.getItem('u_color') || "#ff0000"
+        let user = {
+            name: localStorage.getItem('u_2026') || "Cyber_User",
+            color: localStorage.getItem('c_2026') || "#00f2ff"
         };
 
-        function openCfg() { document.getElementById('new-name').value = my.name; document.getElementById('modal').style.display='flex'; }
-        function closeCfg() { document.getElementById('modal').style.display='none'; }
-        function saveCfg() {
-            my.name = document.getElementById('new-name').value || my.name;
-            my.color = document.getElementById('new-color').value;
-            localStorage.setItem('u_name', my.name);
-            localStorage.setItem('u_color', my.color);
-            closeCfg();
+        function openSettings() { document.getElementById('modal').style.display='flex'; }
+        function closeSettings() { document.getElementById('modal').style.display='none'; }
+        
+        function saveSettings() {
+            user.name = document.getElementById('new-name').value || user.name;
+            user.color = document.getElementById('new-color').value;
+            localStorage.setItem('u_2026', user.name);
+            localStorage.setItem('c_2026', user.color);
+            closeSettings();
         }
 
-        async function send() {
-            const i = document.getElementById('msg-input');
-            const txt = i.value.trim();
-            if(!txt) return;
-            i.value = "";
+        async function sendMsg() {
+            const input = document.getElementById('user-input');
+            const val = input.value.trim();
+            if(!val) return;
+            input.value = "";
 
-            // Envoi de ton message
-            await client.from('messages').insert([{ username: my.name, content: txt, user_color: my.color }]);
+            await client.from('messages').insert([{ username: user.name, content: val, user_color: user.color }]);
 
-            // RÉPONSE AUTOMATIQUE GEMINI
-            if(txt.toLowerCase().includes("@gemini")) {
+            // RÉPONSE GEMINI 2026
+            if(val.toLowerCase().includes("@gemini")) {
                 setTimeout(async () => {
                     await client.from('messages').insert([{ 
-                        username: "Gemini", 
-                        content: "Je suis là ! On a refait la déco, c'est plus propre non ? B) ", 
-                        user_color: "#00a2ff" 
+                        username: "Gemini AI", 
+                        content: "Protocol 2026 activé. Interface optimisée. Comment puis-je vous aider ?", 
+                        user_color: "#00f2ff" 
                     }]);
                 }, 800);
             }
         }
 
-        document.getElementById('send-btn').onclick = send;
-        document.getElementById('msg-input').onkeydown = (e) => { if(e.key==='Enter') send(); };
+        document.getElementById('send-btn').onclick = sendMsg;
+        document.getElementById('user-input').onkeydown = (e) => { if(e.key==='Enter') sendMsg(); };
 
         function render(m) {
-            const sc = document.getElementById('chat-scroller');
-            const d = document.createElement('div');
-            d.className = "msg";
-            d.innerHTML = `<b style="color:${m.user_color}">${m.username}:</b> ${m.content}`;
-            sc.appendChild(d);
-            sc.scrollTop = sc.scrollHeight;
+            const chat = document.getElementById('chat-scroller');
+            const div = document.createElement('div');
+            const isMe = m.username === user.name;
+            div.className = `message ${isMe ? 'me' : ''}`;
+            div.innerHTML = `<b style="color:${m.user_color}">${m.username}</b><br>${m.content}`;
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
         }
 
-        async function init() {
+        async function load() {
             const { data } = await client.from('messages').select('*').order('created_at', {ascending: true}).limit(50);
             if(data) data.forEach(render);
-            client.channel('chat').on('postgres_changes', { event:'INSERT', schema:'public', table:'messages' }, p => render(p.new)).subscribe();
+            client.channel('any').on('postgres_changes', { event:'INSERT', schema:'public', table:'messages' }, p => render(p.new)).subscribe();
         }
-        init();
+        load();
     </script>
 </body>
 </html>
