@@ -3,440 +3,532 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LANOU-CORD | Edition Spéciale 2026</title>
+    <title>LANOU-CORD TITAN | OS v3.0</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
-        /* =========================================
-           1. VARIABLES ET RESET
-           ========================================= */
+        /* ============================================================
+           1. CORE DESIGN SYSTEM (CSS VARIABLES & THEMES)
+           ============================================================ */
         :root {
-            --rbx-orange: #ff3131;
-            --rbx-blue: #00a2ff;
-            --rbx-green: #02b757;
-            --rbx-dark-green: #01853e;
-            --rbx-bg: #e3e3e3;
-            --rbx-sidebar: #f0f0f0;
-            --rbx-shadow: 0 4px 0 rgba(0,0,0,0.2);
-            --header-height: 120px;
+            --primary: #00a2ff; --primary-dark: #0081cc;
+            --secondary: #ff3131; --success: #02b757;
+            --warning: #ffeb3b; --danger: #ff4757;
+            --bg-main: #e3e3e3; --bg-panel: #ffffff;
+            --text-main: #1e1e1e; --text-muted: #666;
+            --border-ui: #444; --glass: rgba(255, 255, 255, 0.85);
+            --neon-shadow: 0 0 15px rgba(0, 162, 255, 0.4);
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * { box-sizing: border-box; }
-        body {
-            margin: 0;
-            padding: 0;
-            background: var(--rbx-bg) url('https://www.transparenttextures.com/patterns/cubes.png');
-            font-family: 'Verdana', 'Geneva', sans-serif;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+        .dark-mode {
+            --bg-main: #0a0a0c; --bg-panel: #141418;
+            --text-main: #f5f5f5; --text-muted: #888;
+            --border-ui: #000; --glass: rgba(20, 20, 25, 0.9);
         }
 
-        /* =========================================
-           2. HEADER (BANNIÈRE ROBLOX 2010)
-           ========================================= */
-        #main-header {
-            width: 100%;
-            height: var(--header-height);
-            background: linear-gradient(to bottom, #75aadb 0%, #ffffff 100%), 
-                        url('https://www.transparenttextures.com/patterns/city.png');
-            border-bottom: 4px solid var(--rbx-blue);
-            display: flex;
-            position: relative;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            z-index: 100;
+        /* ============================================================
+           2. ANIMATIONS & BACKGROUND ENGINE
+           ============================================================ */
+        * { box-sizing: border-box; transition: var(--transition-smooth); }
+        body, html { 
+            margin: 0; padding: 0; height: 100vh; width: 100vw; 
+            font-family: 'Inter', sans-serif; background: var(--bg-main); 
+            color: var(--text-main); overflow: hidden; 
         }
 
-        .logo-container {
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .logo-container:hover { transform: scale(1.05); }
-
-        .logo-main {
-            font-family: 'Bungee', cursive;
-            font-size: 50px;
-            color: var(--rbx-orange);
-            text-shadow: 4px 4px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
-            margin: 0;
-            letter-spacing: -1px;
+        #particle-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none; opacity: 0.5;
         }
 
-        .logo-sub {
-            background: yellow;
-            color: black;
-            font-weight: bold;
-            padding: 2px 15px;
-            border: 2px solid black;
-            font-size: 16px;
-            transform: rotate(-3deg) translateY(-10px);
-            display: inline-block;
-            box-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(255, 49, 49, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(255, 49, 49, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 49, 49, 0); } }
+
+        /* ============================================================
+           3. TITAN HEADER (PREMIUM UI)
+           ============================================================ */
+        header {
+            height: 100px; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 30px; border-bottom: 5px solid var(--border-ui);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3); z-index: 500;
         }
 
-        /* Bouton Serveur Discord (Style Play Now) */
-        .btn-discord {
-            position: absolute;
-            right: 30px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: linear-gradient(to bottom, #3dbd3d 0%, #1d8f1d 100%);
-            border: 3px solid #fff;
-            border-radius: 8px;
-            color: white;
-            padding: 12px 25px;
-            text-decoration: none;
-            font-weight: bold;
-            text-align: center;
-            box-shadow: 0 5px 0 var(--rbx-dark-green), 0 8px 15px rgba(0,0,0,0.2);
-            transition: all 0.1s;
-        }
-        .btn-discord:active {
-            transform: translateY(-48%);
-            box-shadow: 0 2px 0 var(--rbx-dark-green);
-        }
-        .btn-discord span { font-size: 10px; display: block; opacity: 0.8; }
-
-        /* =========================================
-           3. LAYOUT PRINCIPAL
-           ========================================= */
-        .main-wrapper {
-            display: flex;
-            flex: 1;
-            width: 100%;
-            max-width: 1400px;
-            margin: 20px auto;
-            background: white;
-            border: 3px solid #555;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        .titan-logo {
+            display: flex; flex-direction: column; align-items: center; cursor: pointer;
+            animation: float 4s ease-in-out infinite;
         }
 
-        /* =========================================
-           4. SIDEBAR (AMIS & PROFIL)
-           ========================================= */
-        .sidebar {
-            width: 280px;
-            background: var(--rbx-sidebar);
-            border-right: 3px solid #ccc;
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
+        .titan-logo h1 {
+            font-family: 'Bungee'; font-size: 38px; color: #fff; margin: 0;
+            text-shadow: 4px 4px 0 var(--secondary);
         }
 
-        .profile-card {
-            background: white;
-            border: 2px solid #bbb;
-            border-bottom: 5px solid #999;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 25px;
-            text-align: center;
+        .status-pill {
+            background: var(--success); color: white; padding: 3px 12px;
+            border-radius: 20px; font-size: 11px; font-weight: 900; margin-top: -5px;
+            border: 2px solid #fff;
         }
 
-        .avatar-box {
-            width: 80px;
-            height: 80px;
-            background: #f0f000;
-            border: 3px solid #000;
-            border-radius: 50%;
-            margin: 0 auto 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+        /* ============================================================
+           4. MAIN NAVIGATION & TOOLS
+           ============================================================ */
+        .nav-tools { display: flex; gap: 15px; }
+        .tool-btn {
+            background: var(--glass); border: 2px solid var(--border-ui);
+            padding: 10px 18px; border-radius: 8px; cursor: pointer;
+            font-weight: 900; font-size: 13px; display: flex; align-items: center; gap: 8px;
+        }
+        .tool-btn:hover { background: var(--primary); color: white; transform: scale(1.05); }
+
+        /* ============================================================
+           5. LAYOUT SYSTEM
+           ============================================================ */
+        .viewport {
+            display: flex; height: calc(100vh - 100px); padding: 20px;
+            gap: 20px; max-width: 1800px; margin: 0 auto;
         }
 
-        .user-name {
-            font-weight: bold;
-            color: var(--rbx-blue);
-            font-size: 18px;
-            margin-bottom: 5px;
+        /* SIDEBAR MODULES */
+        aside { width: 380px; display: flex; flex-direction: column; gap: 20px; }
+        .panel {
+            background: var(--bg-panel); border: 3px solid var(--border-ui);
+            border-radius: 18px; padding: 20px; box-shadow: var(--shadow);
+            overflow: hidden; position: relative;
         }
 
-        .user-statut {
-            font-size: 11px;
-            color: #777;
-            background: #eee;
-            padding: 4px;
-            border-radius: 4px;
-            font-style: italic;
+        /* PROFILE V3 */
+        .profile-v3 { text-align: center; }
+        .avatar-engine {
+            width: 110px; height: 110px; margin: 0 auto 15px;
+            border-radius: 30px; background: #222; border: 4px solid var(--primary);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 55px; transform: rotate(-5deg);
         }
 
-        .friends-section {
-            flex: 1;
-            overflow-y: auto;
+        .xp-system { margin-top: 20px; }
+        .xp-label { display: flex; justify-content: space-between; font-weight: 900; font-size: 12px; margin-bottom: 8px; }
+        .xp-track { background: #eee; height: 18px; border-radius: 10px; border: 2px solid var(--border-ui); overflow: hidden; }
+        #xp-fill { 
+            width: 0%; height: 100%; background: linear-gradient(90deg, #00c6ff, #0072ff);
+            transition: width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .section-label {
-            font-size: 12px;
-            font-weight: bold;
-            color: #888;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-            border-bottom: 2px solid #ddd;
-            padding-bottom: 5px;
+        /* ACHIEVEMENT TOAST */
+        #achievement-popup {
+            position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%);
+            background: #222; color: #fff; padding: 15px 30px; border-radius: 50px;
+            border: 3px solid var(--warning); z-index: 2000; font-weight: 900;
+            display: flex; align-items: center; gap: 15px; transition: bottom 0.5s;
         }
 
-        .friend-row {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            cursor: pointer;
-        }
-        .friend-row:hover { background: #fafafa; }
-
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 12px;
-            border: 1px solid rgba(0,0,0,0.2);
-        }
-        .online { background: var(--rbx-green); }
-        .offline { background: #bbb; }
-
-        /* =========================================
-           5. ZONE DE CHAT
-           ========================================= */
-        .chat-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: #fff;
-            position: relative;
+        /* ============================================================
+           6. CHAT ENGINE (TITAN CORE)
+           ============================================================ */
+        main {
+            flex: 1; display: flex; flex-direction: column;
+            background: var(--bg-panel); border: 3px solid var(--border-ui);
+            border-radius: 18px; box-shadow: var(--neon-shadow); overflow: hidden;
         }
 
-        #chat-messages {
-            flex: 1;
-            padding: 25px;
-            overflow-y: auto;
-            background: #fdfdfd;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+        #chat-scroller {
+            flex: 1; padding: 25px; overflow-y: scroll;
+            display: flex; flex-direction: column; gap: 18px;
+            scroll-behavior: smooth;
         }
 
-        /* Bulles de messages */
-        .message-bubble {
-            max-width: 85%;
-            padding: 12px 18px;
-            border-radius: 12px;
-            font-size: 14px;
-            line-height: 1.5;
-            position: relative;
-            animation: slideIn 0.2s ease-out;
-            border: 1px solid #eee;
-            background: #fff;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            border-left: 6px solid var(--rbx-blue);
+        .message {
+            display: flex; gap: 15px; max-width: 85%;
+            animation: slideIn 0.4s ease-out;
         }
 
-        .msg-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
+        .m-avatar {
+            width: 45px; height: 45px; background: #eee; border: 2px solid var(--border-ui);
+            border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;
         }
 
-        .msg-author { font-weight: bold; color: var(--rbx-blue); }
-        .msg-time { font-size: 10px; color: #aaa; }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .m-body { display: flex; flex-direction: column; gap: 5px; }
+        .m-user { font-weight: 900; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+        .m-text { 
+            background: var(--bg-main); padding: 12px 18px; border-radius: 0 18px 18px 18px;
+            font-size: 15px; border: 1px solid rgba(0,0,0,0.05); line-height: 1.5;
         }
 
-        /* Barre d'input en bas */
-        .input-area {
-            padding: 25px;
-            background: #f4f4f4;
-            border-top: 2px solid #ddd;
-            display: flex;
-            gap: 15px;
-            align-items: center;
+        .message.me { align-self: flex-end; flex-direction: row-reverse; }
+        .message.me .m-text { background: var(--primary); color: white; border-radius: 18px 0 18px 18px; }
+        
+        .badge-mod { background: var(--secondary); color: white; font-size: 9px; padding: 2px 6px; border-radius: 4px; }
+
+        /* TITAN INPUT */
+        .titan-input-area {
+            padding: 25px; background: var(--glass); border-top: 3px solid var(--border-ui);
+            display: flex; gap: 15px;
         }
 
-        #msg-input {
-            flex: 1;
-            padding: 15px 20px;
-            border-radius: 10px;
-            border: 2px solid #ccc;
-            font-size: 15px;
-            font-family: inherit;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        #msg-input:focus { border-color: var(--rbx-blue); }
-
-        #btn-send {
-            background: var(--rbx-green);
-            color: white;
-            border: none;
-            border-bottom: 5px solid var(--rbx-dark-green);
-            padding: 14px 35px;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.1s;
-        }
-        #btn-send:hover { background: #03cf63; }
-        #btn-send:active { 
-            transform: translateY(3px); 
-            border-bottom-width: 2px;
+        #main-input {
+            flex: 1; padding: 18px 25px; border-radius: 15px; border: 3px solid var(--border-ui);
+            font-size: 16px; font-weight: 700; font-family: 'Inter';
         }
 
-        /* Scrollbar Style */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #999; }
+        #btn-titan-send {
+            background: var(--primary); color: white; border: none;
+            padding: 0 35px; border-radius: 15px; font-weight: 900;
+            cursor: pointer; border-bottom: 5px solid var(--primary-dark);
+        }
+
+        /* ============================================================
+           7. MODALS & OVERLAYS
+           ============================================================ */
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+            display: none; justify-content: center; align-items: center; z-index: 1000;
+        }
+
+        .modal-titan {
+            background: var(--bg-panel); width: 700px; border-radius: 25px;
+            border: 5px solid var(--primary); overflow: hidden;
+        }
+
+        .m-head { background: var(--primary); padding: 20px; color: white; font-family: 'Bungee'; display: flex; justify-content: space-between; }
+        .m-content { padding: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+        .shop-item {
+            border: 2px solid var(--border-ui); border-radius: 15px; padding: 15px;
+            text-align: center; cursor: pointer;
+        }
+        .shop-item:hover { border-color: var(--primary); background: rgba(0,162,255,0.1); }
 
     </style>
 </head>
-<body>
+<body id="titan-app">
 
-    <header id="main-header">
-        <div class="logo-container" onclick="location.reload()">
-            <h1 class="logo-main">LANOU-CORD</h1>
-            <div class="logo-sub">EDITION 2026</div>
+    <canvas id="particle-canvas"></canvas>
+
+    <div id="achievement-popup">
+        <span style="font-size: 30px;">🏆</span>
+        <div>
+            <div style="font-size: 10px; color: var(--warning);">SUCCÈS DÉVÉROUILLÉ</div>
+            <div id="ach-title">TITAN CHATTER</div>
+        </div>
+    </div>
+
+    <div id="modal-shop" class="overlay">
+        <div class="modal-titan">
+            <div class="m-head">🛒 TITAN MARKET & SETTINGS <button onclick="Titan.toggleModal('modal-shop')" style="background:none; border:none; color:white; font-size:24px; cursor:pointer;">×</button></div>
+            <div class="m-content">
+                <div>
+                    <h3 style="font-family:'Bungee'; font-size:14px;">APPARENCE</h3>
+                    <label>Couleur Pseudo:</label><br>
+                    <input type="color" id="cfg-color" onchange="Titan.updateSettings()" style="width:100%; height:40px; margin-bottom:15px;">
+                    <label>Avatar:</label>
+                    <select id="cfg-avatar" onchange="Titan.updateSettings()" style="width:100%; padding:10px; border-radius:8px;">
+                        <option value="👤">Membre</option>
+                        <option value="🥓">Bacon Hair</option>
+                        <option value="👑">VIP King</option>
+                        <option value="🤖">Droid</option>
+                        <option value="🐱">Neko</option>
+                    </select>
+                </div>
+                <div>
+                    <h3 style="font-family:'Bungee'; font-size:14px;">COMMANDES RAPIDES</h3>
+                    <div class="shop-item" onclick="Titan.execCommand('/clear')">🧹 Nettoyer le chat</div>
+                    <div class="shop-item" onclick="Titan.execCommand('/shrug')" style="margin-top:10px;">🤷 Envoyer un Shrug</div>
+                    <div class="shop-item" onclick="Titan.toggleTheme()" style="margin-top:10px;">🌗 Changer Thème</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <div class="nav-tools">
+            <button class="tool-btn" onclick="Titan.toggleModal('modal-shop')">⚙️ MENU SYSTÈME</button>
         </div>
 
-        <a href="https://discord.gg/6Zq7GKypYy" target="_blank" class="btn-discord">
-            REJOINDRE<span>LE SERVEUR OFFICIEL</span>
-        </a>
+        <div class="titan-logo">
+            <h1>LANOU-CORD</h1>
+            <span class="status-pill">OS TITAN v3.0 ACTIVE</span>
+        </div>
+
+        <div class="nav-tools">
+            <div style="text-align: right; color: white;">
+                <div id="clock" style="font-family:'JetBrains Mono'; font-weight:bold;">00:00:00</div>
+                <div style="font-size:9px; font-weight:900; opacity:0.7;">CONNECTED TO SUPABASE CLOUD</div>
+            </div>
+        </div>
     </header>
 
-    <div class="main-wrapper">
-        
-        <aside class="sidebar">
-            <div class="profile-card">
-                <div class="avatar-box" id="p-avatar">👤</div>
-                <div class="user-name" id="p-name">Chargement...</div>
-                <div class="user-statut" id="p-status">Online</div>
-            </div>
+    <div class="viewport">
+        <aside>
+            <div class="panel profile-v3">
+                <div class="avatar-engine" id="display-avatar">👤</div>
+                <div id="display-name" style="font-weight:900; font-size:24px; color:var(--primary);">Joueur</div>
+                <div id="display-rank" style="font-size:11px; font-weight:900; opacity:0.6; letter-spacing:1px; margin-bottom:15px;">RECRUE</div>
 
-            <div class="friends-section">
-                <div class="section-label">Mes Amis (2)</div>
-                
-                <div class="friend-row">
-                    <div class="status-indicator online"></div>
-                    <div>
-                        <div style="font-weight:bold; font-size:13px;">Toi</div>
-                        <div style="font-size:10px; color:#888;">Sur LANOU-CORD</div>
+                <div class="xp-system">
+                    <div class="xp-label">
+                        <span>XP PROGRESSION</span>
+                        <span id="xp-text">0 / 100</span>
                     </div>
-                </div>
-
-                <div class="friend-row">
-                    <div class="status-indicator offline"></div>
-                    <div>
-                        <div style="font-weight:bold; font-size:13px;">Assistant AI</div>
-                        <div style="font-size:10px; color:#888;">En train de coder...</div>
-                    </div>
+                    <div class="xp-track"><div id="xp-fill"></div></div>
+                    <div style="font-size:10px; margin-top:10px; font-weight:bold;">NIVEAU ACTUEL : <span id="lvl-text">1</span></div>
                 </div>
             </div>
-            
-            <div style="text-align:center; font-size:9px; color:#bbb; margin-top:10px;">
-                © 2026 LANOU-CORD Inc.
+
+            <div class="panel" style="flex:1;">
+                <h4 style="font-family:'Bungee'; font-size:12px; margin-bottom:15px; color:var(--secondary);">📜 JOURNAL DE BORD</h4>
+                <div id="sys-logs" style="font-family:'JetBrains Mono'; font-size:10px; line-height:1.6; color:var(--text-muted);">
+                    [SYSTEM] Titan OS démarré...<br>
+                    [DB] Connexion Supabase établie...<br>
+                    [USER] Session utilisateur créée...
+                </div>
             </div>
         </aside>
 
-        <main class="chat-container">
-            <div id="chat-messages">
+        <main>
+            <div id="chat-scroller">
                 </div>
 
-            <div class="input-area">
-                <input type="text" id="msg-input" placeholder="Ecrire un message ici..." autocomplete="off">
-                <button id="btn-send">ENVOYER</button>
+            <div class="titan-input-area">
+                <input type="text" id="main-input" placeholder="Entrez un message ou une commande /..." autocomplete="off">
+                <button id="btn-titan-send">TRANSMETTRE</button>
             </div>
         </main>
-
     </div>
 
-    <audio id="pop-sound" src="https://www.myinstants.com/media/sounds/u_W8m0M.mp3"></audio>
+    <audio id="snd-msg" src="https://www.myinstants.com/media/sounds/u_W8m0M.mp3"></audio>
 
     <script>
-        /* =========================================
-           LOGIQUE SUPABASE & CHAT
-           ========================================= 
-        */
+        const SUPA_URL = "https://pxyrfrgwvmyflrunpvhl.supabase.co";
+        const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4eXJmcmd3dm15ZmxydW5wdmhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjg0NDcsImV4cCI6MjA5MTg0NDQ0N30.K6cs-mSRFmQg9gPzjU-GSarMDgAv2AbvBKJj4Nb8plI";
+        const supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
 
-        // CONFIGURATION
-        const SUPABASE_URL = "https://pxyrfrgwvmyflrunpvhl.supabase.co";
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4eXJmcmd3dm15ZmxydW5wdmhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjg0NDcsImV4cCI6MjA5MTg0NDQ0N30.K6cs-mSRFmQg9gPzjU-GSarMDgAv2AbvBKJj4Nb8plI";
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        /**
+         * GLOBAL TITAN OBJECT
+         */
+        const Titan = {
+            state: {
+                username: localStorage.getItem('t_name') || 'Pilote_' + Math.floor(Math.random()*9999),
+                avatar: localStorage.getItem('t_avatar') || '👤',
+                color: localStorage.getItem('t_color') || '#00a2ff',
+                xp: parseInt(localStorage.getItem('t_xp')) || 0,
+                lvl: parseInt(localStorage.getItem('t_lvl')) || 1,
+                isDark: true,
+                achievements: JSON.parse(localStorage.getItem('t_ach')) || []
+            },
 
-        // ETAT DE L'APPLICATION
-        let currentUser = {
-            name: "",
-            avatar: "👤",
-            joinedAt: new Date().toLocaleTimeString()
+            init() {
+                this.setupParticles();
+                this.updateUI();
+                this.bindEvents();
+                this.syncHistory();
+                this.startClock();
+                this.setupRealtime();
+                this.sysLog("Moteur Titan v3.0 opérationnel.");
+                
+                if(this.state.username.startsWith('Pilote_')) {
+                    const n = prompt("Identification requise - Entrez votre pseudo :");
+                    if(n) { this.state.username = n; this.save(); this.updateUI(); }
+                }
+            },
+
+            // --- UI & CORE ---
+            save() {
+                localStorage.setItem('t_name', this.state.username);
+                localStorage.setItem('t_avatar', this.state.avatar);
+                localStorage.setItem('t_color', this.state.color);
+                localStorage.setItem('t_xp', this.state.xp);
+                localStorage.setItem('t_lvl', this.state.lvl);
+                localStorage.setItem('t_ach', JSON.stringify(this.state.achievements));
+            },
+
+            updateUI() {
+                document.getElementById('display-name').innerText = this.state.username;
+                document.getElementById('display-name').style.color = this.state.color;
+                document.getElementById('display-avatar').innerText = this.state.avatar;
+                document.getElementById('lvl-text').innerText = this.state.lvl;
+                document.getElementById('xp-text').innerText = `${this.state.xp} / 100`;
+                document.getElementById('xp-fill').style.width = `${this.state.xp}%`;
+                
+                let r = "RECRUE";
+                if(this.state.lvl > 5) r = "COMMANDANT";
+                if(this.state.lvl > 15) r = "TITAN LORD";
+                document.getElementById('display-rank').innerText = r;
+            },
+
+            sysLog(msg) {
+                const l = document.getElementById('sys-logs');
+                l.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}<br>`;
+                l.scrollTop = l.scrollHeight;
+            },
+
+            startClock() {
+                setInterval(() => {
+                    document.getElementById('clock').innerText = new Date().toLocaleTimeString();
+                }, 1000);
+            },
+
+            // --- CHAT ENGINE ---
+            async syncHistory() {
+                this.sysLog("Synchronisation Supabase...");
+                const { data, error } = await supabase.from('messages').select('*').order('created_at', {ascending: true}).limit(40);
+                if(data) data.forEach(m => this.renderMsg(m));
+            },
+
+            setupRealtime() {
+                supabase.channel('titan_net').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, p => {
+                    this.renderMsg(p.new);
+                    this.playNotif();
+                }).subscribe();
+            },
+
+            renderMsg(m) {
+                const box = document.getElementById('chat-scroller');
+                const isMe = m.username === this.state.username;
+                
+                const div = document.createElement('div');
+                div.className = `message ${isMe ? 'me' : ''}`;
+                div.innerHTML = `
+                    <div class="m-avatar">${m.username === 'Gemini Assistant' ? '🤖' : (m.avatar || '👤')}</div>
+                    <div class="m-body">
+                        <div class="m-user" style="color:${m.user_color || '#00a2ff'}">
+                            ${m.username} ${m.username === 'LANOU' ? '<span class="badge-mod">ADMIN</span>' : ''}
+                        </div>
+                        <div class="m-text">${this.escapeHTML(m.content)}</div>
+                    </div>
+                `;
+                box.appendChild(div);
+                box.scrollTop = box.scrollHeight;
+            },
+
+            async sendMessage() {
+                const inp = document.getElementById('main-input');
+                const val = inp.value.trim();
+                if(!val) return;
+
+                if(val.startsWith('/')) {
+                    this.execCommand(val);
+                    inp.value = "";
+                    return;
+                }
+
+                inp.value = "";
+                const { error } = await supabase.from('messages').insert([{
+                    username: this.state.username,
+                    content: val,
+                    user_color: this.state.color,
+                    avatar: this.state.avatar
+                }]);
+
+                if(!error) this.gainXP(15);
+            },
+
+            gainXP(amt) {
+                this.state.xp += amt;
+                if(this.state.xp >= 100) {
+                    this.state.xp = 0;
+                    this.state.lvl++;
+                    this.unlockAch("LEVEL UP ! Nouveau palier atteint.");
+                }
+                this.updateUI();
+                this.save();
+            },
+
+            // --- COMMANDS ---
+            execCommand(cmd) {
+                const parts = cmd.split(' ');
+                const base = parts[0].toLowerCase();
+
+                if(base === '/clear') document.getElementById('chat-scroller').innerHTML = "";
+                if(base === '/shrug') this.sendSilent("¯\\_(ツ)_/¯");
+                if(base === '/help') alert("Commandes : /clear, /shrug, /nick [nom], /color [hex]");
+                if(base === '/nick' && parts[1]) { this.state.username = parts[1]; this.save(); this.updateUI(); }
+            },
+
+            async sendSilent(c) {
+                await supabase.from('messages').insert([{ username: this.state.username, content: c, user_color: this.state.color, avatar: this.state.avatar }]);
+            },
+
+            // --- VISUAL ENGINE ---
+            setupParticles() {
+                const canvas = document.getElementById('particle-canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                let particles = [];
+
+                class Particle {
+                    constructor() {
+                        this.x = Math.random() * canvas.width;
+                        this.y = Math.random() * canvas.height;
+                        this.size = Math.random() * 2 + 1;
+                        this.speedX = Math.random() * 1 - 0.5;
+                        this.speedY = Math.random() * 1 - 0.5;
+                    }
+                    update() {
+                        this.x += this.speedX; this.y += this.speedY;
+                        if(this.x > canvas.width) this.x = 0; if(this.x < 0) this.x = canvas.width;
+                        if(this.y > canvas.height) this.y = 0; if(this.y < 0) this.y = canvas.height;
+                    }
+                    draw() {
+                        ctx.fillStyle = Titan.state.color;
+                        ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill();
+                    }
+                }
+
+                for(let i=0; i<50; i++) particles.push(new Particle());
+
+                function animate() {
+                    ctx.clearRect(0,0, canvas.width, canvas.height);
+                    particles.forEach(p => { p.update(); p.draw(); });
+                    requestAnimationFrame(animate);
+                }
+                animate();
+            },
+
+            // --- UTILS ---
+            toggleModal(id) {
+                const m = document.getElementById(id);
+                m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
+            },
+
+            updateSettings() {
+                this.state.color = document.getElementById('cfg-color').value;
+                this.state.avatar = document.getElementById('cfg-avatar').value;
+                this.save();
+                this.updateUI();
+            },
+
+            toggleTheme() {
+                document.body.classList.toggle('dark-mode');
+            },
+
+            unlockAch(title) {
+                const p = document.getElementById('achievement-popup');
+                document.getElementById('ach-title').innerText = title;
+                p.style.bottom = "40px";
+                setTimeout(() => p.style.bottom = "-100px", 4000);
+            },
+
+            playNotif() {
+                document.getElementById('snd-msg').play().catch(()=>{});
+            },
+
+            escapeHTML(str) {
+                return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+            },
+
+            bindEvents() {
+                document.getElementById('btn-titan-send').onclick = () => this.sendMessage();
+                document.getElementById('main-input').onkeydown = (e) => { if(e.key === 'Enter') this.sendMessage(); };
+            }
         };
 
-        // INITIALISATION
-        async function startApp() {
-            console.log("Démarrage de LANOU-CORD...");
-            
-            // 1. Demander le pseudo
-            currentUser.name = prompt("Bienvenue ! Entre ton pseudo Roblox :") || "Guest" + Math.floor(Math.random()*999);
-            
-            // 2. Mettre à jour l'interface profil
-            document.getElementById('p-name').innerText = currentUser.name;
-            
-            // 3. Charger l'historique
-            await fetchMessages();
-
-            // 4. Activer le Realtime
-            subscribeToChat();
-        }
-
-        // CHARGER LES MESSAGES DEPUIS LA TABLE 'messages'
-        async function fetchMessages() {
-            const { data, error } = await supabase
-                .from('messages')
-                .select('*')
-                .order('created_at', { ascending: true })
-                .limit(50);
-
-            if (error) {
-                console.error("Erreur historique:", error.message);
-                return;
-            }
-
-            const container = document.getElementById('chat-messages');
-            container.innerHTML = ""; // Clear loader
-            data.forEach(msg => renderMessage(msg));
-        }
-
-        // ÉCOUTER LES NOUVEAUX MESSAGES
-        function subscribeToChat() {
-            supabase
-                .channel('public_room')
-                .on('postgres_changes', { 
-                    event: 'INSERT', 
-                    schema: 'public', 
-                    table: 'messages' 
-                }, payload => {
-                    renderMessage(payload.new);
-                    playNotification();
-                })
-                .subscribe();
-        }
-
-        // AFFICHER UN MESSAGE DANS LE DOM
-        function renderMessage(msg) {
-            const container = document.getElementById('chat-messages');
-            
-            const div = document.createElement('div');
+        window.onload = () => Titan.init();
+    </script>
+</body>
+</html>
