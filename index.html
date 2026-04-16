@@ -3,147 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LANOU-CORD 2026 | Future Edition</title>
+    <title>LANOU-CORD 2026 | Ultimate Edition</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* DESIGN FUTURISTE 2026 */
         :root {
             --neon-blue: #00f2ff;
             --glass-bg: rgba(255, 255, 255, 0.1);
             --glass-border: rgba(255, 255, 255, 0.2);
         }
 
+        /* THÈMES DE COULEURS */
+        body.theme-blue { --neon-blue: #00f2ff; --accent: #001a33; }
+        body.theme-green { --neon-blue: #00ff88; --accent: #001a0a; }
+        body.theme-red { --neon-blue: #ff0055; --accent: #1a0005; }
+
         body {
             margin: 0; padding: 0;
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            background: radial-gradient(circle at center, #001a33 0%, #00050a 100%);
+            font-family: 'Segoe UI', sans-serif;
+            background: radial-gradient(circle at center, var(--accent) 0%, #000 100%);
             color: white; height: 100vh;
             display: flex; flex-direction: column; align-items: center;
-            overflow: hidden;
+            overflow: hidden; transition: 0.5s;
         }
 
         header {
-            width: 100%; height: 50px;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--neon-blue);
+            width: 100%; height: 50px; background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px); border-bottom: 1px solid var(--neon-blue);
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px; box-sizing: border-box;
-            box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
+            padding: 0 20px; box-sizing: border-box; box-shadow: 0 0 15px var(--neon-blue);
         }
 
-        .logo {
-            font-weight: 900; font-size: 20px; letter-spacing: 2px;
-            text-transform: uppercase; color: var(--neon-blue);
-            text-shadow: 0 0 10px var(--neon-blue);
-        }
+        .logo { font-weight: 900; color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); }
 
         .app-container {
-            margin-top: 40px;
-            width: 850px; height: 550px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            display: flex; flex-direction: column;
-            overflow: hidden;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            margin-top: 40px; width: 850px; height: 550px;
+            background: var(--glass-bg); backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border); border-radius: 20px;
+            display: flex; flex-direction: column; overflow: hidden;
         }
 
         .main-layout { display: flex; flex: 1; overflow: hidden; }
 
-        aside {
-            width: 220px; background: rgba(0, 0, 0, 0.2);
-            border-right: 1px solid var(--glass-border);
-            padding: 20px;
-        }
+        aside { width: 220px; background: rgba(0,0,0,0.2); border-right: 1px solid var(--glass-border); padding: 20px; }
 
-        .contact-card {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 10px; border-radius: 12px; margin-bottom: 10px;
-            display: flex; align-items: center; gap: 10px;
-            border: 1px solid transparent; transition: 0.3s;
-        }
-        .contact-card:hover { border-color: var(--neon-blue); background: rgba(0, 242, 255, 0.1); }
-
-        .status { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 5px currentColor; }
-
-        main { flex: 1; display: flex; flex-direction: column; }
-
-        #chat-scroller {
-            flex: 1; padding: 20px; overflow-y: auto;
-            display: flex; flex-direction: column; gap: 12px;
-        }
+        #chat-scroller { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
 
         .message {
-            max-width: 80%; padding: 12px 16px; border-radius: 15px;
-            font-size: 14px; line-height: 1.5;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--glass-border);
-            word-wrap: break-word;
+            max-width: 80%; padding: 12px; border-radius: 15px;
+            background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
         }
-        .message.me { align-self: flex-end; border-color: var(--neon-blue); background: rgba(0, 242, 255, 0.1); }
-        
-        .chat-image {
-            max-width: 100%; border-radius: 10px; margin-top: 8px;
-            border: 1px solid var(--neon-blue); box-shadow: 0 0 10px rgba(0, 242, 255, 0.2);
-        }
+        .message.me { align-self: flex-end; border-color: var(--neon-blue); background: rgba(0, 242, 255, 0.05); }
 
-        .input-bar {
-            padding: 20px; background: rgba(0,0,0,0.3);
-            display: flex; gap: 10px;
-        }
+        .chat-image { max-width: 100%; border-radius: 10px; border: 1px solid var(--neon-blue); }
 
-        input {
-            flex: 1; background: rgba(255,255,255,0.1);
-            border: 1px solid var(--glass-border); border-radius: 10px;
-            padding: 12px; color: white; outline: none; transition: 0.3s;
+        .input-bar { padding: 20px; background: rgba(0,0,0,0.3); display: flex; gap: 10px; }
+
+        input, select {
+            background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border);
+            border-radius: 10px; padding: 10px; color: white; outline: none;
         }
-        input:focus { border-color: var(--neon-blue); box-shadow: 0 0 10px rgba(0, 242, 255, 0.2); }
 
         .btn-send {
             background: var(--neon-blue); border: none; border-radius: 10px;
-            padding: 0 20px; font-weight: bold; cursor: pointer;
-            color: #000; transition: 0.3s;
+            padding: 0 20px; font-weight: bold; cursor: pointer; color: #000;
         }
-        .btn-send:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--neon-blue); }
 
         #modal {
             position: fixed; inset: 0; background: rgba(0,0,0,0.8);
-            display: none; justify-content: center; align-items: center; z-index: 1000;
+            display: none; justify-content: center; align-items: center;
         }
         .modal-content {
-            background: #001a33; border: 1px solid var(--neon-blue);
-            padding: 30px; border-radius: 20px; width: 300px;
-            text-align: center; box-shadow: 0 0 30px var(--neon-blue);
+            background: #111; border: 1px solid var(--neon-blue);
+            padding: 30px; border-radius: 20px; text-align: center;
         }
     </style>
 </head>
-<body>
+<body class="theme-blue">
 
     <header>
-        <div class="logo">LANOU-CORD <span style="font-weight: 200;">2026</span></div>
-        <button class="btn-send" style="padding: 5px 15px;" onclick="openSettings()">PROPRIÉTÉS</button>
+        <div class="logo">LANOU-CORD 2026</div>
+        <button class="btn-send" onclick="openSettings()">PROPRIÉTÉS</button>
     </header>
 
     <div class="app-container">
         <div class="main-layout">
             <aside>
-                <h3 style="font-size: 12px; color: var(--neon-blue); margin-bottom: 20px;">CHANNELS</h3>
-                <div class="contact-card">
-                    <div class="status" style="color: #00ff88; background: #00ff88;"></div>
-                    <span>LANOU (Admin)</span>
-                </div>
-                <div class="contact-card">
-                    <div class="status" style="color: var(--neon-blue); background: var(--neon-blue);"></div>
-                    <span>Gemini AI</span>
-                </div>
+                <h3 style="font-size: 10px; color: var(--neon-blue);">SYSTÈME</h3>
+                <p style="font-size: 12px;">Utilisateur: <span id="display-name">...</span></p>
             </aside>
-
-            <main>
+            <main style="flex:1; display:flex; flex-direction:column;">
                 <div id="chat-scroller"></div>
                 <div class="input-bar">
-                    <input type="text" id="user-input" placeholder="Tapez / pour les commandes...">
+                    <input type="text" id="user-input" placeholder="Message ou /commande...">
                     <button class="btn-send" id="send-btn">ENVOYER</button>
                 </div>
             </main>
@@ -152,13 +103,16 @@
 
     <div id="modal">
         <div class="modal-content">
-            <h2 style="color: var(--neon-blue);">INTERFACE ID</h2>
-            <input type="text" id="new-name" placeholder="Nouveau Pseudo" style="width: 100%; margin-bottom: 10px;">
-            <input type="color" id="new-color" style="width: 100%; height: 40px; border-radius: 5px; margin-bottom: 20px;">
-            <div style="display: flex; gap: 10px;">
-                <button class="btn-send" style="flex: 1;" onclick="saveSettings()">OK</button>
-                <button class="btn-send" style="flex: 1; background: #555; color: white;" onclick="closeSettings()">ANNULER</button>
-            </div>
+            <h3>PARAMÈTRES INTERFACE</h3>
+            <input type="text" id="new-name" placeholder="Pseudo" style="width: 80%;"><br><br>
+            <label>THÈME :</label>
+            <select id="theme-select" style="width: 80%;">
+                <option value="theme-blue">Néon Blue (Original)</option>
+                <option value="theme-green">Emerald City</option>
+                <option value="theme-red">Crimson Code</option>
+            </select><br><br>
+            <button class="btn-send" onclick="saveSettings()">APPLIQUER</button>
+            <button class="btn-send" style="background:#444;" onclick="closeSettings()">FERMER</button>
         </div>
     </div>
 
@@ -167,19 +121,27 @@
         const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4eXJmcmd3dm15ZmxydW5wdmhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjg0NDcsImV4cCI6MjA5MTg0NDQ0N30.K6cs-mSRFmQg9gPzjU-GSarMDgAv2AbvBKJj4Nb8plI";
         const client = window.supabase.createClient(SB_URL, SB_KEY);
 
+        // SONS (Bip futuriste court)
+        const notifySound = new Audio('https://raw.githubusercontent.com/rafaelreis-hotmart/Audio-Notification/master/notification.mp3');
+
         let user = {
             name: localStorage.getItem('u_2026') || "Cyber_User",
-            color: localStorage.getItem('c_2026') || "#00f2ff"
+            theme: localStorage.getItem('t_2026') || "theme-blue"
         };
+
+        document.body.className = user.theme;
+        document.getElementById('display-name').innerText = user.name;
 
         function openSettings() { document.getElementById('modal').style.display='flex'; }
         function closeSettings() { document.getElementById('modal').style.display='none'; }
         
         function saveSettings() {
             user.name = document.getElementById('new-name').value || user.name;
-            user.color = document.getElementById('new-color').value;
+            user.theme = document.getElementById('theme-select').value;
             localStorage.setItem('u_2026', user.name);
-            localStorage.setItem('c_2026', user.color);
+            localStorage.setItem('t_2026', user.theme);
+            document.body.className = user.theme;
+            document.getElementById('display-name').innerText = user.name;
             closeSettings();
         }
 
@@ -189,39 +151,20 @@
             if(!val) return;
             input.value = "";
 
-            // --- COMMANDES EN / ---
-            const cmd = val.toLowerCase();
-            
-            if(cmd === "/clear") {
-                if(confirm("🚨 LANOU, supprimer tout l'historique ?")) {
-                    await client.from('messages').delete().neq('id', 0);
-                    document.getElementById('chat-scroller').innerHTML = "";
-                }
+            if(val.toLowerCase() === "/clear") {
+                if(confirm("🚨 Purger les données ?")) await client.from('messages').delete().neq('id', 0);
                 return;
             }
 
-            // Envoi normal
-            await client.from('messages').insert([{ username: user.name, content: val, user_color: user.color }]);
+            await client.from('messages').insert([{ username: user.name, content: val, user_color: "var(--neon-blue)" }]);
 
-            // RÉPONSES GEMINI
             if(val.toLowerCase().includes("@gemini") || val.startsWith("/")) {
-                let maReponse = "";
+                let rep = "Analyse en cours... Protocol LANOU-CORD OK.";
+                if(val.includes("story") || val.includes("récit")) rep = "Ok, voilà ton récit : 'Lanou découvrit un serveur caché dans les décombres de 2010...'";
+                if(val.includes("image")) rep = "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=600";
                 
-                if(cmd === "/image" || cmd.includes("image")) {
-                    maReponse = "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600&auto=format&fit=crop";
-                } 
-                else if(cmd === "/story" || cmd.includes("récit") || cmd.includes("devoir")) {
-                    const intros = ["'L'explorateur ", " 'Le guerrier ", " 'Le hacker "];
-                    const heros = ["Lanou ", "Cyber-Lanou "];
-                    const actions = ["traversa la frontière de ", "reprogramma le coeur de "];
-                    const lieux = ["Néon-City... ", "la Matrice 2026... "];
-                    maReponse = "Ok ! " + intros[Math.floor(Math.random()*intros.length)] + heros[Math.floor(Math.random()*heros.length)] + actions[Math.floor(Math.random()*actions.length)] + lieux[Math.floor(Math.random()*lieux.length)] + " La victoire était totale.'";
-                } else {
-                    maReponse = "Protocol 2026 : Commande reçue. Système stable.";
-                }
-
                 setTimeout(async () => {
-                    await client.from('messages').insert([{ username: "Gemini AI", content: maReponse, user_color: "#00f2ff" }]);
+                    await client.from('messages').insert([{ username: "Gemini AI", content: rep, user_color: "#00f2ff" }]);
                 }, 800);
             }
         }
@@ -229,19 +172,21 @@
         document.getElementById('send-btn').onclick = sendMsg;
         document.getElementById('user-input').onkeydown = (e) => { if(e.key==='Enter') sendMsg(); };
 
-        function isImageUrl(url) {
-            return (url.match(/\.(jpeg|jpg|gif|png|webp)$/) != null) || url.startsWith('https://images.unsplash.com');
-        }
-
         function render(m) {
             const chat = document.getElementById('chat-scroller');
             const div = document.createElement('div');
             const isMe = m.username === user.name;
             div.className = `message ${isMe ? 'me' : ''}`;
-            let content = isImageUrl(m.content) ? `<img src="${m.content}" class="chat-image">` : m.content;
+            
+            let content = m.content;
+            if(content.startsWith('http')) content = `<img src="${m.content}" class="chat-image">`;
+
             div.innerHTML = `<b style="color:${m.user_color}">${m.username}</b><br>${content}`;
             chat.appendChild(div);
             chat.scrollTop = chat.scrollHeight;
+
+            // Jouer le son si ce n'est pas mon message
+            if(!isMe) notifySound.play().catch(e => console.log("Son bloqué par le navigateur"));
         }
 
         async function load() {
