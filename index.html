@@ -3,162 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LANOU-CORD 2010 FIX</title>
+    <title>LANOU-CORD | Paramètres 2010</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --win-header: linear-gradient(to bottom, #74b0f0 0%, #1959d1 100%); --win-blue: #0053e1; }
+        /* STYLE RETRO 2010 */
+        :root { 
+            --win-blue: #0053e1; 
+            --win-header: linear-gradient(to bottom, #74b0f0 0%, #1959d1 100%);
+            --win-grey: #f0f0f0;
+        }
+
         body { margin: 0; font-family: 'Tahoma', sans-serif; background: #3a6ea5; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        header { background: var(--win-header); height: 40px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; color: white; border-bottom: 2px solid #003da0; }
-        
-        .container { display: flex; flex: 1; padding: 10px; gap: 10px; overflow: hidden; }
-        .win-panel { background: white; border: 2px solid var(--win-blue); border-radius: 5px 5px 0 0; display: flex; flex-direction: column; box-shadow: 2px 2px 10px rgba(0,0,0,0.3); }
-        
-        /* Contacts */
-        aside { width: 220px; }
-        .win-header { background: var(--win-header); color: white; padding: 5px 10px; font-size: 12px; font-weight: bold; }
-        .list { flex: 1; overflow-y: auto; padding: 10px; }
-        .item { display: flex; align-items: center; gap: 8px; padding: 5px; border-bottom: 1px solid #eee; cursor: pointer; }
-        .dot { width: 8px; height: 8px; border-radius: 50%; background: #31ff31; }
+        /* Barre du haut */
+        header { background: var(--win-header); height: 35px; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; color: white; border-bottom: 1px solid #003da0; box-shadow: 0 2px 5px rgba(0,0,0,0.4); }
+        .logo { font-weight: bold; font-size: 14px; text-shadow: 1px 1px #000; }
 
-        /* Chat */
-        main { flex: 1; }
-        #chat-scroller { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #fff; }
-        .bubble { padding: 8px 12px; border-radius: 10px; background: #f1f1f1; border: 1px solid #ccc; max-width: 80%; font-size: 13px; }
-        .me { align-self: flex-end; background: #e1ffc7; border-color: #b7e88f; }
+        .container { display: flex; flex: 1; padding: 10px; gap: 8px; overflow: hidden; }
+        .win-panel { background: white; border: 1px solid var(--win-blue); display: flex; flex-direction: column; box-shadow: 2px 2px 0px rgba(0,0,0,0.2); }
 
-        .input-box { padding: 10px; background: #f0f0f0; border-top: 1px solid #ccc; display: flex; gap: 5px; }
-        input[type="text"] { flex: 1; padding: 8px; border: 1px solid var(--win-blue); }
+        /* Barre de titre interne */
+        .title-bar { background: var(--win-header); color: white; padding: 3px 8px; font-size: 11px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .win-btn-x { background: #e81123; color: white; border: none; padding: 1px 6px; font-size: 10px; cursor: pointer; }
+
+        /* Chat & Liste */
+        .list { flex: 1; overflow-y: auto; padding: 10px; font-size: 12px; }
+        .item { display: flex; align-items: center; gap: 5px; padding: 4px; border-bottom: 1px solid #eee; }
+        .dot { width: 9px; height: 9px; border-radius: 50%; background: #31ff31; border: 1px solid #156d15; }
+
+        #chat-scroller { flex: 1; padding: 10px; overflow-y: auto; background: white; border: 1px inset #ccc; margin: 5px; }
+        .bubble { padding: 5px 10px; margin-bottom: 5px; background: #f1f1f1; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; line-height: 1.4; width: fit-content; max-width: 85%; }
+        .me { background: #e1ffc7; align-self: flex-end; border-color: #b7e88f; }
+
+        /* Input Zone */
+        .input-box { padding: 8px; background: var(--win-grey); display: flex; gap: 5px; border-top: 1px solid #ccc; }
+        input[type="text"] { flex: 1; border: 1px solid #7a98af; padding: 4px; font-size: 13px; }
         
-        .btn { background: #eee; border: 1px solid #707070; padding: 4px 10px; cursor: pointer; font-size: 12px; }
-        .btn:hover { background: #ddd; }
+        .btn-retro { 
+            background: linear-gradient(to bottom, #ffffff 0%, #e0e0e0 100%); 
+            border: 1px solid #707070; padding: 3px 12px; font-size: 12px; cursor: pointer; 
+            box-shadow: inset 0 1px 0 white;
+        }
+        .btn-retro:hover { background: #e5f1fb; border-color: #0078d7; }
+        .btn-retro:active { background: #cce4f7; }
 
-        /* Modal Paramètres */
-        #modal-win { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 999; }
-        .modal-body { width: 300px; background: #ece9d8; border: 2px solid var(--win-blue); padding: 0; }
+        /* FENÊTRE PARAMÈTRES (VRAI LOOK 2010) */
+        #modal-win { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; justify-content: center; align-items: center; z-index: 999; }
+        .dialog-box { width: 320px; background: #f0f0f0; border: 1px solid #0053e1; box-shadow: 4px 4px 15px rgba(0,0,0,0.3); }
+        .dialog-content { padding: 15px; font-size: 12px; }
+        .group-box { border: 1px solid #b9b9b9; padding: 15px; margin-top: 5px; background: white; }
+        .group-title { position: relative; top: -25px; left: 10px; background: white; padding: 0 5px; font-weight: bold; color: #444; }
     </style>
 </head>
 <body>
 
     <header>
-        <div>🌐 LANOU-CORD 2010</div>
+        <div class="logo">🌐 LANOU-CORD v2.10</div>
         <div>
-            <button class="btn" id="btn-open-cfg">🔧 Options</button>
-            <button class="btn" onclick="location.reload()">Déconnexion</button>
+            <button class="btn-retro" id="open-settings">⚙️ Propriétés</button>
         </div>
     </header>
 
     <div class="container">
-        <aside class="win-panel">
-            <div class="win-header">Contacts</div>
+        <aside class="win-panel" style="width: 200px;">
+            <div class="title-bar">Liste de contacts</div>
             <div class="list">
-                <div class="item"><div class="dot"></div><b>LANOU</b></div>
-                <div class="item"><div class="dot" style="background:#00a2ff"></div><b>Assistant</b></div>
+                <div class="item"><div class="dot"></div><b>LANOU (Admin)</b></div>
+                <div class="item"><div class="dot" style="background:#00a2ff"></div><b>Assistant Gemini</b></div>
                 <hr>
-                <div id="friends-list"></div>
-                <button class="btn" style="width:100%" id="btn-add-friend">+ Ajouter ami</button>
+                <div id="friends"></div>
+                <button class="btn-retro" style="width:100%; margin-top:5px;" id="add-friend">+ Ajouter</button>
             </div>
         </aside>
 
-        <main class="win-panel">
-            <div class="win-header">Discussion Globale</div>
-            <div id="chat-scroller"></div>
+        <main class="win-panel" style="flex: 1;">
+            <div class="title-bar"><span>Discussion : #general</span><button class="win-btn-x">X</button></div>
+            <div id="chat-scroller" style="display: flex; flex-direction: column;"></div>
             <div class="input-box">
-                <input type="text" id="msg-in" placeholder="Message...">
-                <button class="btn" style="background:var(--win-blue); color:white" id="btn-send">ENVOYER</button>
+                <input type="text" id="msg-input" placeholder="Ecrivez ici...">
+                <button class="btn-retro" id="send-btn" style="font-weight: bold; border-color: #0053e1;">Envoyer</button>
             </div>
         </main>
     </div>
 
     <div id="modal-win">
-        <div class="modal-body win-panel">
-            <div class="win-header">Paramètres</div>
-            <div style="padding:15px">
-                <label>Pseudo :</label><br>
-                <input type="text" id="new-name" style="width:95%"><br><br>
-                <label>Couleur :</label><br>
-                <input type="color" id="new-color" style="width:95%"><br><br>
-                <button class="btn" style="width:100%" id="btn-save-cfg">APPLIQUER</button>
+        <div class="dialog-box">
+            <div class="title-bar"><span>Propriétés de l'utilisateur</span><button class="win-btn-x" onclick="closeCfg()">X</button></div>
+            <div class="dialog-content">
+                <div class="group-box">
+                    <span class="group-title">Identité</span>
+                    <label>Votre pseudo :</label><br>
+                    <input type="text" id="set-name" style="width: 100%; margin-bottom: 15px;"><br>
+                    <label>Couleur du texte :</label><br>
+                    <input type="color" id="set-color" style="width: 100%; height: 30px;">
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
+                    <button class="btn-retro" id="save-cfg" style="width: 80px;">OK</button>
+                    <button class="btn-retro" onclick="closeCfg()" style="width: 80px;">Annuler</button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // 1. CONFIG
         const SB_URL = "https://pxyrfrgwvmyflrunpvhl.supabase.co";
         const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4eXJmcmd3dm15ZmxydW5wdmhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjg0NDcsImV4cCI6MjA5MTg0NDQ0N30.K6cs-mSRFmQg9gPzjU-GSarMDgAv2AbvBKJj4Nb8plI";
         const client = window.supabase.createClient(SB_URL, SB_KEY);
 
-        let user = {
-            name: localStorage.getItem('u_name') || prompt("Ton pseudo ?") || "Anonyme",
+        let my = {
+            name: localStorage.getItem('u_name') || prompt("Pseudo ?") || "User",
             color: localStorage.getItem('u_color') || "#000000"
         };
 
-        // 2. FONCTIONS BOUTONS (Fixées)
-        document.getElementById('btn-open-cfg').onclick = () => {
-            document.getElementById('new-name').value = user.name;
+        // --- BOUTONS ---
+        document.getElementById('open-settings').onclick = () => {
+            document.getElementById('set-name').value = my.name;
             document.getElementById('modal-win').style.display = 'flex';
         };
 
-        document.getElementById('btn-save-cfg').onclick = () => {
-            user.name = document.getElementById('new-name').value;
-            user.color = document.getElementById('new-color').value;
-            localStorage.setItem('u_name', user.name);
-            localStorage.setItem('u_color', user.color);
-            document.getElementById('modal-win').style.display = 'none';
-            alert("Sauvegardé !");
+        function closeCfg() { document.getElementById('modal-win').style.display = 'none'; }
+
+        document.getElementById('save-cfg').onclick = () => {
+            my.name = document.getElementById('set-name').value;
+            my.color = document.getElementById('set-color').value;
+            localStorage.setItem('u_name', my.name);
+            localStorage.setItem('u_color', my.color);
+            closeCfg();
         };
 
-        document.getElementById('btn-add-friend').onclick = () => {
-            let name = prompt("Pseudo de l'ami :");
-            if(name) {
-                const div = document.createElement('div');
-                div.className = "item";
-                div.innerHTML = `<div class="dot" style="background:gray"></div><b>${name}</b>`;
-                document.getElementById('friends-list').appendChild(div);
-                alert("Demande envoyée !");
+        document.getElementById('add-friend').onclick = () => {
+            let n = prompt("Nom de l'ami :");
+            if(n) {
+                const d = document.createElement('div'); d.className="item"; d.innerHTML=`<div class="dot" style="background:gray"></div><b>${n}</b>`;
+                document.getElementById('friends').appendChild(d);
             }
         };
 
-        // 3. ENVOI MESSAGE
+        // --- LOGIQUE CHAT ---
         async function send() {
-            const input = document.getElementById('msg-in');
+            const input = document.getElementById('msg-input');
             const txt = input.value.trim();
             if(!txt) return;
-
             input.value = "";
-            const { error } = await client.from('messages').insert([{ 
-                username: user.name, 
-                content: txt, 
-                user_color: user.color 
-            }]);
-            if(error) alert("Erreur Supabase : " + error.message);
+            await client.from('messages').insert([{ username: my.name, content: txt, user_color: my.color }]);
         }
 
-        document.getElementById('btn-send').onclick = send;
-        document.getElementById('msg-in').onkeydown = (e) => { if(e.key === 'Enter') send(); };
+        document.getElementById('send-btn').onclick = send;
+        document.getElementById('msg-input').onkeydown = (e) => { if(e.key === 'Enter') send(); };
 
-        // 4. AFFICHAGE
         function render(m) {
             const box = document.getElementById('chat-scroller');
             const div = document.createElement('div');
-            div.className = `bubble ${m.username === user.name ? 'me' : ''}`;
+            div.className = `bubble ${m.username === my.name ? 'me' : ''}`;
             div.innerHTML = `<b style="color:${m.user_color}">${m.username}</b>: ${m.content}`;
             box.appendChild(div);
             box.scrollTop = box.scrollHeight;
         }
 
-        // 5. DEMARRAGE
-        async function start() {
+        async function init() {
             const { data } = await client.from('messages').select('*').order('created_at', {ascending: true}).limit(50);
             if(data) data.forEach(render);
-
-            client.channel('chat').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, p => {
-                render(p.new);
-            }).subscribe();
+            client.channel('chat').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, p => render(p.new)).subscribe();
         }
 
-        start();
+        init();
     </script>
 </body>
 </html>
