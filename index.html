@@ -3,105 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/149/149071.png">
-    
-    <title>LANOU-CORD | CORE 2026</title>
+    <title>LANOU-CORD | REBOOT SYSTEM</title>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
-        /* ---------------------------------------------------------
-           SECTION : DESIGN ATOMIQUE & CSS (LIGNES 30-180)
-        --------------------------------------------------------- */
+        /* SECTION : DESIGN CYBERPUNK ULTIME
+           Optimisé pour la vitesse et le style.
+        */
         :root {
             --neon-blue: #00f2ff;
-            --neon-glow: 0 0 20px rgba(0, 242, 255, 0.4);
-            --bg-dark: #000810;
-            --glass: rgba(255, 255, 255, 0.07);
-            --glass-border: rgba(255, 255, 255, 0.12);
-            --font: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            --msg-me: rgba(0, 242, 255, 0.12);
-            --msg-them: rgba(255, 255, 255, 0.05);
+            --neon-pink: #ff0055;
+            --neon-green: #00ff88;
+            --bg-black: #000205;
+            --glass: rgba(255, 255, 255, 0.08);
+            --border: rgba(255, 255, 255, 0.15);
+            --glow: 0 0 15px rgba(0, 242, 255, 0.5);
         }
 
-        /* DYNAMISME DES THEMES */
-        body.theme-blue { --neon-blue: #00f2ff; --bg: radial-gradient(circle, #001a33 0%, #00050a 100%); }
-        body.theme-green { --neon-blue: #00ff88; --bg: radial-gradient(circle, #001a0a 0%, #00050a 100%); }
-        body.theme-red { --neon-blue: #ff0055; --bg: radial-gradient(circle, #1a0005 0%, #00050a 100%); }
+        /* THEMES DYNAMIQUES */
+        body.theme-blue { --accent: var(--neon-blue); --bg-gradient: radial-gradient(circle, #001529 0%, #000205 100%); }
+        body.theme-green { --accent: var(--neon-green); --bg-gradient: radial-gradient(circle, #001a0a 0%, #000205 100%); }
+        body.theme-red { --accent: var(--neon-pink); --bg-gradient: radial-gradient(circle, #1a0005 0%, #000205 100%); }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
 
         body {
-            font-family: var(--font);
-            background: var(--bg);
-            color: #fff;
+            font-family: 'Orbitron', 'Segoe UI', sans-serif;
+            background: var(--bg-gradient);
+            color: #ffffff;
             height: 100vh;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-            transition: 0.5s ease;
+            transition: 0.5s;
         }
 
-        /* HEADER & NAVIGATION */
+        /* HEADER */
         header {
-            height: 65px;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 2px solid var(--neon-blue);
+            height: 70px;
+            background: rgba(0, 0, 0, 0.9);
+            border-bottom: 2px solid var(--accent);
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 30px;
+            box-shadow: 0 0 30px rgba(0,0,0,1);
             z-index: 1000;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.5);
         }
 
-        .sys-logo {
-            font-size: 24px;
-            font-weight: 900;
-            letter-spacing: 4px;
-            color: var(--neon-blue);
-            text-shadow: var(--neon-glow);
-        }
-
-        /* NEWS TICKER */
-        .marquee-zone {
-            width: 100%;
-            height: 38px;
-            background: rgba(0,0,0,0.4);
-            border-bottom: 1px solid var(--glass-border);
+        .logo-box {
             display: flex;
             align-items: center;
+            gap: 15px;
+        }
+
+        .logo-text {
+            font-size: 26px;
+            font-weight: 900;
+            letter-spacing: 5px;
+            color: var(--accent);
+            text-shadow: 0 0 10px var(--accent);
+        }
+
+        /* BARRE DE NEWS */
+        .news-bar {
+            height: 35px;
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid var(--border);
             overflow: hidden;
+            display: flex;
+            align-items: center;
         }
 
-        .marquee-track {
+        .news-slider {
             white-space: nowrap;
-            padding-left: 100%;
-            animation: slide-text 35s linear infinite;
-            color: var(--neon-blue);
-            font-size: 13px;
-            font-weight: 700;
+            animation: slide 40s linear infinite;
+            color: var(--accent);
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
         }
 
-        @keyframes slide-text {
-            from { transform: translateX(0); }
-            to { transform: translateX(-100%); }
+        @keyframes slide {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
         }
 
-        .badge-info {
-            background: var(--neon-blue);
-            color: #000;
-            padding: 2px 10px;
-            border-radius: 5px;
-            font-size: 11px;
-            margin-right: 15px;
-        }
-
-        /* MAIN APP LAYOUT */
-        .app-core {
+        /* MISE EN PAGE */
+        .app-wrapper {
             flex: 1;
             display: flex;
             padding: 20px;
@@ -109,56 +104,54 @@
             overflow: hidden;
         }
 
-        /* BARRE LATERALE */
-        .sidebar {
-            width: 260px;
+        /* SIDEBAR */
+        aside {
+            width: 280px;
             background: var(--glass);
-            border: 1px solid var(--glass-border);
-            border-radius: 25px;
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            backdrop-filter: blur(20px);
             padding: 25px;
-            backdrop-filter: blur(15px);
             display: flex;
             flex-direction: column;
-            gap: 25px;
+            gap: 20px;
         }
 
-        .sidebar h5 {
-            color: var(--neon-blue);
+        .side-title {
             font-size: 11px;
-            text-transform: uppercase;
+            color: var(--accent);
             letter-spacing: 2px;
-            opacity: 0.7;
+            opacity: 0.6;
         }
 
-        .channel {
-            padding: 12px;
+        .item {
+            padding: 15px;
             background: rgba(255,255,255,0.03);
-            border-radius: 12px;
+            border-radius: 15px;
             cursor: pointer;
             transition: 0.3s;
-            border: 1px solid transparent;
         }
 
-        .channel:hover {
-            background: rgba(255,255,255,0.08);
-            border-color: var(--neon-blue);
+        .item:hover {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid var(--accent);
         }
 
-        /* CHAT VIEWPORT */
-        .chat-main {
+        /* MESSAGERIE */
+        .main-chat {
             flex: 1;
             background: var(--glass);
-            border: 1px solid var(--glass-border);
-            border-radius: 25px;
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            backdrop-filter: blur(20px);
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            backdrop-filter: blur(15px);
         }
 
-        #messages-container {
+        #chat-flow {
             flex: 1;
-            padding: 25px;
+            padding: 30px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -166,340 +159,338 @@
             scroll-behavior: smooth;
         }
 
-        /* BUBBLE STYLES */
-        .msg-block {
-            max-width: 80%;
+        /* STYLES MESSAGES */
+        .msg-wrap {
+            max-width: 75%;
             display: flex;
             gap: 15px;
-            animation: fadeIn 0.4s ease;
+            animation: bounceIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes bounceIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
         }
 
-        .msg-block.me { align-self: flex-end; flex-direction: row-reverse; }
+        .msg-wrap.me {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
 
-        .avatar-img {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            border: 2px solid var(--neon-blue);
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            border: 2px solid var(--accent);
             object-fit: cover;
-            box-shadow: var(--neon-glow);
+            box-shadow: 0 0 10px var(--accent);
         }
 
-        .bubble-content {
-            background: var(--msg-them);
+        .bubble {
             padding: 15px 20px;
             border-radius: 20px;
-            border: 1px solid var(--glass-border);
-            line-height: 1.5;
-            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            line-height: 1.6;
         }
 
-        .me .bubble-content {
-            background: var(--msg-me);
-            border-color: var(--neon-blue);
-            border-bottom-right-radius: 4px;
+        .me .bubble {
+            background: rgba(0, 242, 255, 0.1);
+            border-color: var(--accent);
         }
 
-        .user-tag {
-            font-size: 11px;
-            font-weight: 800;
-            color: var(--neon-blue);
+        .name-label {
             display: block;
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--accent);
             margin-bottom: 5px;
+            text-transform: uppercase;
         }
 
-        /* INPUT AREA */
-        .dock-bar {
-            padding: 25px;
+        /* ZONE SAISIE */
+        .bottom-bar {
+            padding: 30px;
             background: rgba(0,0,0,0.5);
             display: flex;
             gap: 15px;
-            border-top: 1px solid var(--glass-border);
         }
 
-        .input-field {
+        .main-input {
             flex: 1;
-            background: rgba(255,255,255,0.06);
-            border: 1px solid var(--glass-border);
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
             border-radius: 15px;
-            padding: 15px 20px;
+            padding: 15px 25px;
             color: white;
+            font-size: 16px;
             outline: none;
-            transition: 0.3s;
         }
 
-        .input-field:focus {
-            border-color: var(--neon-blue);
+        .main-input:focus {
+            border-color: var(--accent);
             background: rgba(255,255,255,0.1);
         }
 
-        .btn-core {
-            padding: 0 25px;
-            border-radius: 12px;
+        .btn {
+            padding: 0 30px;
+            border-radius: 15px;
             border: none;
             font-weight: bold;
             cursor: pointer;
-            transition: 0.2s;
+            transition: 0.3s;
+            text-transform: uppercase;
         }
 
-        .btn-send { background: var(--neon-blue); color: #000; }
-        .btn-send:hover { transform: scale(1.05); box-shadow: var(--neon-glow); }
+        .btn-blue { background: var(--accent); color: #000; }
+        .btn-blue:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--accent); }
 
         /* MODALS */
-        .overlay {
+        .full-screen {
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 2000;
+            z-index: 9999;
         }
 
-        .modal-box {
-            background: #001226;
-            border: 2px solid var(--neon-blue);
-            padding: 40px;
-            border-radius: 30px;
-            width: 380px;
+        .login-box {
+            background: #000810;
+            border: 2px solid var(--accent);
+            padding: 50px;
+            border-radius: 40px;
             text-align: center;
+            width: 400px;
+            box-shadow: 0 0 50px rgba(0, 242, 255, 0.2);
         }
 
-        .pfp-preview {
-            width: 100px;
-            height: 100px;
+        .pfp-pick {
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
-            border: 3px solid var(--neon-blue);
-            margin-bottom: 25px;
+            border: 3px solid var(--accent);
+            margin-bottom: 30px;
             cursor: pointer;
             object-fit: cover;
         }
 
-        /* SCROLLBAR */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: var(--neon-blue); border-radius: 10px; }
+        /* SCROLLBAR CUSTOM */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
     </style>
 </head>
 
 <body class="theme-blue">
 
     <header>
-        <div class="sys-logo">LANOU-CORD CORE</div>
-        <button class="btn-core btn-send" style="height: 40px; font-size: 11px;" onclick="openSettings()">PARAMÈTRES</button>
+        <div class="logo-box">
+            <div class="logo-text">LANOU-CORD</div>
+        </div>
+        <button class="btn btn-blue" onclick="showSet(true)">Settings</button>
     </header>
 
-    <div class="marquee-zone">
-        <div class="marquee-track" id="ticker-text">
-            <span class="badge-info">SYNC_ON</span> RÉSEAU SÉCURISÉ — TOUS LES SYSTÈMES SONT OPÉRATIONNELS — SAUVEGARDE CLOUD ACTIVÉE — VERSION 6.5 —
+    <div class="news-bar">
+        <div class="news-slider">
+            SYSTEM STATUS: ONLINE | ENCRYPTION: ACTIVE | PERSISTENCE ENGINE: LOADED | WELCOME TO THE FUTURE OF CHAT |
         </div>
     </div>
 
-    <div class="app-core">
-        <aside class="sidebar">
-            <h5>Fréquences</h5>
-            <div class="channel">🟢 GÉNÉRAL</div>
-            <div class="channel" style="opacity:0.4">🔒 ARCHIVES</div>
+    <div class="app-wrapper">
+        <aside>
+            <div class="side-title">CHANNELS</div>
+            <div class="item"># GENERAL-HUB</div>
+            <div class="item" style="opacity: 0.3"># SECURE-VAULT</div>
             
-            <h5 style="margin-top:20px;">Utilisateurs</h5>
-            <div class="channel">👤 LANOU (ADMIN)</div>
+            <div class="side-title" style="margin-top:30px">ACTIVE USERS</div>
+            <div class="item">👤 LANOU (Host)</div>
         </aside>
 
-        <main class="chat-main">
-            <div id="messages-container"></div>
+        <main class="main-chat">
+            <div id="chat-flow"></div>
             
-            <div class="dock-bar">
-                <input type="file" id="file-hidden" style="display:none" onchange="handleFile()">
-                <button class="btn-core" style="background:#222; color:#fff" onclick="document.getElementById('file-hidden').click()">📎</button>
-                <input type="text" id="msg-input" class="input-field" placeholder="Transmettre un signal...">
-                <button class="btn-core btn-send" id="btn-transmit">ENVOYER</button>
+            <div class="bottom-bar">
+                <input type="file" id="file-up" style="display:none" onchange="fileTrans()">
+                <button class="btn" style="background:#222; color:white;" onclick="document.getElementById('file-up').click()">📎</button>
+                <input type="text" id="user-msg" class="main-input" placeholder="Type a message...">
+                <button class="btn btn-blue" id="send-trigger">TRANSMIT</button>
             </div>
         </main>
     </div>
 
-    <div id="login-modal" class="overlay" style="display: flex;">
-        <div class="modal-box">
-            <h2 style="color:var(--neon-blue); margin-bottom: 25px;">IDENTIFICATION</h2>
-            <img id="login-pfp-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="pfp-preview" onclick="document.getElementById('login-pfp-input').click()">
-            <input type="file" id="login-pfp-input" style="display:none" accept="image/*" onchange="previewImg(this, 'login-pfp-img')">
+    <div id="auth-modal" class="full-screen" style="display: flex;">
+        <div class="login-box">
+            <h1 style="color:var(--accent); margin-bottom:20px; letter-spacing:3px;">IDENTIFICATION</h1>
             
-            <input type="text" id="login-name" class="input-field" style="width:100%; margin-bottom: 25px;" placeholder="Désignation (Pseudo)">
-            <button class="btn-core btn-send" style="width:100%; height:50px;" onclick="registerCore()">ACCÉDER AU RÉSEAU</button>
+            <img id="pfp-preview" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="pfp-pick" onclick="document.getElementById('pfp-input').click()">
+            <input type="file" id="pfp-input" style="display:none" accept="image/*" onchange="preview(this)">
+            
+            <input type="text" id="user-name" class="main-input" style="width:100%; margin-bottom: 25px; text-align:center;" placeholder="Enter Username...">
+            
+            <button class="btn btn-blue" style="width:100%; height:60px;" onclick="tryLogin()">ACCÉDER AU RÉSEAU</button>
         </div>
     </div>
 
-    <div id="settings-modal" class="overlay">
-        <div class="modal-box">
-            <h2 style="color:var(--neon-blue); margin-bottom: 25px;">CONFIGURATION</h2>
-            <select id="theme-select" class="input-field" style="width:100%; margin-bottom: 25px;">
-                <option value="theme-blue">Néon Blue (Core)</option>
+    <div id="set-modal" class="full-screen">
+        <div class="login-box">
+            <h2 style="color:var(--accent); margin-bottom:20px;">UI CONFIG</h2>
+            <select id="theme-sel" class="main-input" style="width:100%; margin-bottom: 20px;">
+                <option value="theme-blue">Neon Blue</option>
                 <option value="theme-green">Toxic Green</option>
                 <option value="theme-red">Fatal Red</option>
             </select>
-            <button class="btn-core btn-send" style="width:100%; margin-bottom: 15px;" onclick="applySettings()">SAUVEGARDER</button>
-            <button class="btn-core" style="width:100%; background:#333; color:#fff;" onclick="closeSettings()">FERMER</button>
+            <button class="btn btn-blue" style="width:100%" onclick="saveSet()">APPLY</button>
+            <button class="btn" style="width:100%; margin-top:10px; background:#333; color:white;" onclick="showSet(false)">CLOSE</button>
         </div>
     </div>
 
     <script>
-        // 1. CONFIGURATION INITIALE
-        const SB_URL = "https://pxyrfrgwvmyflrunpvhl.supabase.co";
-        const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4eXJmcmd3dm15ZmxydW5wdmhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjg0NDcsImV4cCI6MjA5MTg0NDQ0N30.K6cs-mSRFmQg9gPzjU-GSarMDgAv2AbvBKJj4Nb8plI";
-        const supabase = window.supabase.createClient(SB_URL, SB_KEY);
+        /* SECTION : JAVASCRIPT ENGINE (LIGNES 380-500)
+           Gére la connexion Supabase et le bouton d'accès.
+        */
 
-        let userState = {
-            name: localStorage.getItem('lanou_name') || null,
+        // CONFIGURATION SUPABASE
+        const SUPA_URL = "https://pxyrfrgwvmyflrunpvhl.supabase.co";
+        const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4eXJmcmd3dm15ZmxydW5wdmhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjg0NDcsImV4cCI6MjA5MTg0NDQ0N30.K6cs-mSRFmQg9gPzjU-GSarMDgAv2AbvBKJj4Nb8plI";
+        const supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+
+        let myState = {
+            id: localStorage.getItem('lanou_id') || null,
             pfp: localStorage.getItem('lanou_pfp') || "https://cdn-icons-png.flaticon.com/512/149/149071.png",
             theme: localStorage.getItem('lanou_theme') || "theme-blue"
         };
 
-        const notify = new Audio('https://raw.githubusercontent.com/rafaelreis-hotmart/Audio-Notification/master/notification.mp3');
+        const alertSnd = new Audio('https://raw.githubusercontent.com/rafaelreis-hotmart/Audio-Notification/master/notification.mp3');
 
-        // 2. LANCEMENT DU SYSTÈME
-        window.addEventListener('DOMContentLoaded', () => {
-            if (userState.name) {
-                document.getElementById('login-modal').style.display = 'none';
-                document.body.className = userState.theme;
-                launchChat();
+        // FORCE START : Vérifie si on est déjà connecté au démarrage
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("Système prêt.");
+            if (myState.id) {
+                document.getElementById('auth-modal').style.display = 'none';
+                document.body.className = myState.theme;
+                startEngine();
             }
         });
 
-        // 3. GESTION DES MODALS ET IMAGES
-        function previewImg(input, targetId) {
+        // FONCTION LOGIN (Celle appelée par le bouton)
+        function tryLogin() {
+            console.log("Tentative de connexion...");
+            const name = document.getElementById('user-name').value.trim();
+            
+            if (name === "") {
+                alert("Erreur : Pseudo vide !");
+                return;
+            }
+
+            // Enregistrement Local
+            myState.id = name;
+            localStorage.setItem('lanou_id', name);
+            localStorage.setItem('lanou_pfp', myState.pfp);
+
+            // Cacher le modal
+            document.getElementById('auth-modal').style.display = 'none';
+            console.log("Accès accordé à : " + name);
+
+            // Lancer le moteur
+            startEngine();
+        }
+
+        function preview(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    document.getElementById(targetId).src = e.target.result;
-                    userState.pfp = e.target.result;
+                    document.getElementById('pfp-preview').src = e.target.result;
+                    myState.pfp = e.target.result;
                 };
                 reader.readAsDataURL(input.files[0]);
             }
         }
 
-        function openSettings() { document.getElementById('settings-modal').style.display = 'flex'; }
-        function closeSettings() { document.getElementById('settings-modal').style.display = 'none'; }
-
-        function registerCore() {
-            const name = document.getElementById('login-name').value.trim();
-            if (!name) return alert("Identification requise !");
-            
-            userState.name = name;
-            localStorage.setItem('lanou_name', name);
-            localStorage.setItem('lanou_pfp', userState.pfp);
-            
-            document.getElementById('login-modal').style.display = 'none';
-            launchChat();
-        }
-
-        function applySettings() {
-            userState.theme = document.getElementById('theme-select').value;
-            localStorage.setItem('lanou_theme', userState.theme);
-            document.body.className = userState.theme;
-            closeSettings();
-        }
-
-        // 4. MOTEUR DE CHAT ET PERSISTANCE (LE CŒUR)
-        async function launchChat() {
-            console.log("Système : Chargement de l'historique...");
-            
-            // Étape A : Charger les messages existants (POUR LE REFRESH)
+        // MOTEUR DE CHAT
+        async function startEngine() {
+            // 1. Charger l'historique Supabase
             const { data, error } = await supabase
                 .from('messages')
                 .select('*')
                 .order('created_at', { ascending: true })
                 .limit(100);
 
-            if (error) {
-                console.error("Erreur Supabase (Load):", error.message);
-            } else {
-                document.getElementById('messages-container').innerHTML = ""; // Nettoyage
-                data.forEach(m => renderMessage(m));
+            if (!error && data) {
+                document.getElementById('chat-flow').innerHTML = "";
+                data.forEach(m => render(m));
             }
 
-            // Étape B : Écouteur Temps Réel (Realtime)
-            supabase.channel('room_general')
+            // 2. Ecouteur Realtime
+            supabase.channel('room1')
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, (payload) => {
-                    // On ne rend que si ce n'est pas NOTRE message (déjà rendu localement)
-                    if (payload.new.username !== userState.name) {
-                        renderMessage(payload.new);
-                        notify.play().catch(() => {});
+                    if (payload.new.username !== myState.id) {
+                        render(payload.new);
+                        alertSnd.play().catch(()=>{});
                     }
                 })
                 .subscribe();
         }
 
         async function transmit() {
-            const input = document.getElementById('msg-input');
+            const input = document.getElementById('user-msg');
             const val = input.value.trim();
             if (!val) return;
 
-            // Commande Spéciale
-            if (val.toLowerCase().startsWith('/news ')) {
-                const txt = val.substring(6).toUpperCase();
-                document.getElementById('ticker-text').innerHTML = `<span class="badge-info">INFO</span> ${txt} — `;
-                input.value = ""; return;
-            }
-
-            const newMsg = {
-                username: userState.name,
+            const pack = {
+                username: myState.id,
                 content: val,
-                avatar_url: userState.pfp,
-                user_color: "var(--neon-blue)"
+                avatar_url: myState.pfp
             };
 
-            // 1. Rendu LOCAL IMMÉDIAT (Vitesse)
-            renderMessage(newMsg);
+            // Rendu local immédiat
+            render(pack);
             input.value = "";
 
-            // 2. Sauvegarde CLOUD (Persistance)
-            const { error } = await supabase.from('messages').insert([newMsg]);
-            if (error) {
-                console.error("Erreur Supabase (Save):", error.message);
-                alert("Erreur de sauvegarde : " + error.message);
-            }
+            // Sauvegarde Cloud
+            const { error } = await supabase.from('messages').insert([pack]);
+            if (error) console.error("Erreur de sauvegarde Cloud.");
         }
 
-        function renderMessage(m) {
-            const container = document.getElementById('messages-container');
-            const isMe = m.username === userState.name;
+        function render(m) {
+            const flow = document.getElementById('chat-flow');
+            const isMe = m.username === myState.id;
             
-            const div = document.createElement('div');
-            div.className = `msg-block ${isMe ? 'me' : ''}`;
+            const wrap = document.createElement('div');
+            wrap.className = `msg-wrap ${isMe ? 'me' : ''}`;
             
-            let content = m.content;
-            if (content.startsWith('http')) {
-                content = `<img src="${content}" style="max-width:100%; border-radius:15px; border:1px solid var(--neon-blue); margin-top:10px;">`;
-            } else if (content.startsWith('[FICHIER]')) {
-                content = `<div style="padding:10px; background:rgba(255,255,255,0.05); border-radius:10px; border:1px dashed var(--neon-blue);">📁 ${content.replace('[FICHIER] ', '')}</div>`;
-            }
-
-            div.innerHTML = `
-                <img src="${m.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" class="avatar-img">
-                <div class="bubble-content">
-                    <span class="user-tag">${m.username}</span>
-                    ${content}
+            wrap.innerHTML = `
+                <img src="${m.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" class="avatar">
+                <div class="bubble">
+                    <span class="name-label">${m.username}</span>
+                    <div class="text">${m.content}</div>
                 </div>
             `;
 
-            container.appendChild(div);
-            container.scrollTop = container.scrollHeight;
+            flow.appendChild(wrap);
+            flow.scrollTop = flow.scrollHeight;
         }
 
-        function handleFile() {
-            const f = document.getElementById('file-hidden').files[0];
-            if (f) {
-                document.getElementById('msg-input').value = `[FICHIER] ${f.name}`;
+        function showSet(b) { document.getElementById('set-modal').style.display = b ? 'flex' : 'none'; }
+        
+        function saveSet() {
+            myState.theme = document.getElementById('theme-sel').value;
+            localStorage.setItem('lanou_theme', myState.theme);
+            document.body.className = myState.theme;
+            showSet(false);
+        }
+
+        function fileTrans() {
+            const f = document.getElementById('file-up').files[0];
+            if(f) {
+                document.getElementById('user-msg').value = "📁 FICHIER : " + f.name;
                 transmit();
             }
         }
 
-        // 5. EVENEMENTS
-        document.getElementById('btn-transmit').onclick = transmit;
-        document.getElementById('msg-input').onkeydown = (e) => { if (e.key === 'Enter') transmit(); };
+        // Ecouteurs Clavier
+        document.getElementById('send-trigger').onclick = transmit;
+        document.getElementById('user-msg').onkeydown = (e) => { if (e.key === 'Enter') transmit(); };
 
     </script>
 </body>
