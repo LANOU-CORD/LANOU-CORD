@@ -21,19 +21,9 @@
             --bg-gradient: radial-gradient(circle at center, #001a33 0%, #00050a 100%);
         }
 
-        /* Thèmes de couleur */
-        body.theme-blue { 
-            --neon-blue: #00f2ff; 
-            --bg-gradient: radial-gradient(circle at center, #001a33 0%, #00050a 100%); 
-        }
-        body.theme-green { 
-            --neon-blue: #00ff88; 
-            --bg-gradient: radial-gradient(circle at center, #001a0a 0%, #00050a 100%); 
-        }
-        body.theme-red { 
-            --neon-blue: #ff0055; 
-            --bg-gradient: radial-gradient(circle at center, #1a0005 0%, #00050a 100%); 
-        }
+        body.theme-blue { --neon-blue: #00f2ff; --bg-gradient: radial-gradient(circle at center, #001a33 0%, #00050a 100%); }
+        body.theme-green { --neon-blue: #00ff88; --bg-gradient: radial-gradient(circle at center, #001a0a 0%, #00050a 100%); }
+        body.theme-red { --neon-blue: #ff0055; --bg-gradient: radial-gradient(circle at center, #1a0005 0%, #00050a 100%); }
 
         body {
             margin: 0; padding: 0; 
@@ -48,198 +38,43 @@
             transition: 0.5s;
         }
 
-        /* Barre de navigation haute */
         header {
-            width: 100%; 
-            height: 50px; 
+            width: 100%; height: 50px; 
             background: rgba(0, 0, 0, 0.5); 
             backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--neon-blue); 
-            display: flex; 
-            align-items: center;
-            justify-content: space-between; 
-            padding: 0 20px; 
-            box-sizing: border-box;
-            box-shadow: 0 0 15px rgba(0, 242, 255, 0.3); 
-            z-index: 10;
+            display: flex; align-items: center; justify-content: space-between; padding: 0 20px; box-sizing: border-box;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.3); z-index: 10;
         }
 
-        .logo { 
-            font-weight: 900; 
-            font-size: 20px; 
-            letter-spacing: 2px; 
-            color: var(--neon-blue); 
-            text-shadow: 0 0 10px var(--neon-blue); 
-        }
+        .logo { font-weight: 900; font-size: 20px; letter-spacing: 2px; color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); }
 
-        /* Bandeau de News défilant */
-        .news-container {
-            width: 100%; 
-            background: rgba(0, 0, 0, 0.4); 
-            border-bottom: 1px solid var(--glass-border);
-            overflow: hidden; 
-            white-space: nowrap; 
-            padding: 6px 0;
-        }
-        .news-track {
-            display: inline-block; 
-            padding-left: 100%; 
-            animation: marquee 25s linear infinite;
-            color: var(--neon-blue); 
-            font-size: 11px; 
-            font-weight: bold; 
-            letter-spacing: 1px;
-        }
-        @keyframes marquee { 
-            0% { transform: translate(0, 0); } 
-            100% { transform: translate(-100%, 0); } 
-        }
-        .news-label { 
-            background: var(--neon-blue); 
-            color: #000; 
-            padding: 2px 6px; 
-            border-radius: 3px; 
-            margin-right: 10px; 
-        }
+        .news-container { width: 100%; background: rgba(0, 0, 0, 0.4); border-bottom: 1px solid var(--glass-border); overflow: hidden; white-space: nowrap; padding: 6px 0; }
+        .news-track { display: inline-block; padding-left: 100%; animation: marquee 25s linear infinite; color: var(--neon-blue); font-size: 11px; font-weight: bold; letter-spacing: 1px; }
+        @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
+        .news-label { background: var(--neon-blue); color: #000; padding: 2px 6px; border-radius: 3px; margin-right: 10px; }
 
-        /* Conteneur principal de l'App */
-        .app-container {
-            margin-top: 20px; 
-            width: 850px; 
-            height: 500px;
-            background: var(--glass-bg); 
-            backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border); 
-            border-radius: 20px;
-            display: flex; 
-            flex-direction: column; 
-            overflow: hidden;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-        }
-
+        .app-container { margin-top: 20px; width: 850px; height: 500px; background: var(--glass-bg); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
         .main-layout { display: flex; flex: 1; overflow: hidden; }
 
-        /* Barre latérale gauche */
-        aside { 
-            width: 200px; 
-            background: rgba(0, 0, 0, 0.2); 
-            border-right: 1px solid var(--glass-border); 
-            padding: 20px; 
-        }
-        
-        .contact-card {
-            background: rgba(255, 255, 255, 0.05); 
-            padding: 10px; 
-            border-radius: 12px; 
-            margin-bottom: 10px;
-            display: flex; 
-            align-items: center; 
-            gap: 10px; 
-            border: 1px solid transparent;
-        }
+        aside { width: 200px; background: rgba(0, 0, 0, 0.2); border-right: 1px solid var(--glass-border); padding: 20px; }
+        .contact-card { background: rgba(255, 255, 255, 0.05); padding: 10px; border-radius: 12px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
         .status { width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 5px currentColor; }
 
-        /* Zone de Chat */
-        #chat-scroller { 
-            flex: 1; 
-            padding: 20px; 
-            overflow-y: auto; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 12px; 
-        }
+        #chat-scroller { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+        .message { max-width: 75%; padding: 12px 16px; border-radius: 15px; font-size: 14px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); display: flex; gap: 10px; }
+        .message.me { align-self: flex-end; border-color: var(--neon-blue); background: rgba(0, 242, 255, 0.08); flex-direction: row-reverse; }
 
-        .message {
-            max-width: 75%; 
-            padding: 12px 16px; 
-            border-radius: 15px; 
-            font-size: 14px;
-            background: rgba(255, 255, 255, 0.05); 
-            border: 1px solid var(--glass-border);
-            display: flex; 
-            gap: 10px; 
-            align-items: flex-start;
-        }
-        .message.me { 
-            align-self: flex-end; 
-            border-color: var(--neon-blue); 
-            background: rgba(0, 242, 255, 0.08); 
-            flex-direction: row-reverse; 
-        }
+        .avatar { width: 35px; height: 35px; border-radius: 50%; border: 1px solid var(--neon-blue); object-fit: cover; background: #222; }
+        .chat-image { max-width: 100%; border-radius: 10px; margin-top: 8px; border: 1px solid var(--neon-blue); }
 
-        .avatar { 
-            width: 35px; 
-            height: 35px; 
-            border-radius: 50%; 
-            border: 1px solid var(--neon-blue); 
-            object-fit: cover; 
-            background: #222; 
-        }
+        .input-bar { padding: 20px; background: rgba(0,0,0,0.3); display: flex; gap: 10px; }
+        input, select { flex: 1; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); border-radius: 10px; padding: 12px; color: white; outline: none; }
+        .btn-send { background: var(--neon-blue); border: none; border-radius: 10px; padding: 0 20px; font-weight: bold; cursor: pointer; color: #000; }
 
-        .chat-image { 
-            max-width: 100%; 
-            border-radius: 10px; 
-            margin-top: 8px; 
-            border: 1px solid var(--neon-blue); 
-        }
-
-        /* Zone de saisie */
-        .input-bar { 
-            padding: 20px; 
-            background: rgba(0,0,0,0.3); 
-            display: flex; 
-            gap: 10px; 
-        }
-
-        input, select {
-            flex: 1; 
-            background: rgba(255,255,255,0.1); 
-            border: 1px solid var(--glass-border);
-            border-radius: 10px; 
-            padding: 12px; 
-            color: white; 
-            outline: none;
-        }
-
-        .btn-send {
-            background: var(--neon-blue); 
-            border: none; 
-            border-radius: 10px;
-            padding: 0 20px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            color: #000; 
-            transition: 0.3s;
-        }
-
-        /* Fenêtres Modales */
-        #modal, #login-modal { 
-            position: fixed; 
-            inset: 0; 
-            background: rgba(0,0,0,0.85); 
-            display: none; 
-            justify-content: center; 
-            align-items: center; 
-            z-index: 1000; 
-        }
-        .modal-content { 
-            background: #001a33; 
-            border: 1px solid var(--neon-blue); 
-            padding: 30px; 
-            border-radius: 20px; 
-            width: 320px; 
-            text-align: center; 
-        }
-        
-        .pfp-preview { 
-            width: 80px; 
-            height: 80px; 
-            border-radius: 50%; 
-            border: 2px solid var(--neon-blue); 
-            margin: 10px auto; 
-            cursor: pointer; 
-            object-fit: cover; 
-        }
+        #modal, #login-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: #001a33; border: 1px solid var(--neon-blue); padding: 30px; border-radius: 20px; width: 320px; text-align: center; }
+        .pfp-preview { width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--neon-blue); margin: 10px auto; cursor: pointer; object-fit: cover; }
     </style>
 </head>
 <body class="theme-blue">
@@ -251,7 +86,7 @@
 
     <div class="news-container">
         <div class="news-track" id="news-bar">
-            <span class="news-label">DIRECT</span> BIENVENUE ADMIN LANOU — SYSTÈME DE NEWS OPÉRATIONNEL — TAPE /NEWS POUR CHANGER CE TEXTE — 
+            <span class="news-label">NOUVEAUTÉS</span> [UPDATE 1.2] : SYSTÈME D'AVATARS OPÉRATIONNEL — [CLOAD] : TRANSFERT DE FICHIERS (📎) — [VITESSE] : ENVOI INSTANTANÉ ACTIVÉ —
         </div>
     </div>
 
@@ -267,7 +102,7 @@
                 <div class="input-bar">
                     <input type="file" id="file-input" style="display:none" onchange="uploadFile()">
                     <button class="btn-send" onclick="document.getElementById('file-input').click()">📎</button>
-                    <input type="text" id="user-input" placeholder="Transmission ou /commande...">
+                    <input type="text" id="user-input" placeholder="Transmission instantanée...">
                     <button class="btn-send" id="send-btn">ENVOYER</button>
                 </div>
             </main>
@@ -279,116 +114,80 @@
             <h3 style="color: var(--neon-blue);">PARAMÈTRES</h3>
             <img id="pfp-edit" src="" class="pfp-preview" onclick="document.getElementById('pfp-input').click()">
             <input type="file" id="pfp-input" style="display:none" accept="image/*" onchange="previewPFP(this)">
-            <p style="font-size:10px; margin-bottom:15px; color:#ccc;">Modifier la photo de profil</p>
-            
             <input type="text" id="new-name" placeholder="Pseudo" style="width: 90%; margin-bottom: 10px;">
-            
             <select id="theme-select" style="width: 90%; margin-bottom: 20px;">
                 <option value="theme-blue">Néon Blue</option>
                 <option value="theme-green">Emerald Green</option>
                 <option value="theme-red">Crimson Red</option>
             </select>
-            
-            <div style="display:flex; gap:10px;">
-                <button class="btn-send" style="flex:1" onclick="saveSettings()">OK</button>
-                <button class="btn-send" style="flex:1; background:#444; color:white;" onclick="closeSettings()">FERMER</button>
-            </div>
+            <div style="display:flex; gap:10px;"><button class="btn-send" style="flex:1" onclick="saveSettings()">OK</button><button class="btn-send" style="flex:1; background:#444; color:white;" onclick="closeSettings()">FERMER</button></div>
         </div>
     </div>
 
     <div id="login-modal">
         <div class="modal-content">
             <h3 style="color: var(--neon-blue);">CRÉATION PROFIL</h3>
-            <div style="position:relative">
-                <img id="pfp-reg" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="pfp-preview" onclick="document.getElementById('pfp-reg-input').click()">
-                <input type="file" id="pfp-reg-input" style="display:none" accept="image/*" onchange="previewPFP(this)">
-            </div>
-            <input type="text" id="reg-name" placeholder="Pseudo unique..." style="width: 90%; margin-bottom: 10px; margin-top:10px;">
-            <p id="reg-error" style="color:#ff0055; font-size:11px; display:none; margin-bottom:10px;">Ce pseudo est déjà pris !</p>
+            <img id="pfp-reg" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="pfp-preview" onclick="document.getElementById('pfp-reg-input').click()">
+            <input type="file" id="pfp-reg-input" style="display:none" accept="image/*" onchange="previewPFP(this)">
+            <input type="text" id="reg-name" placeholder="Pseudo unique..." style="width: 90%; margin-bottom: 10px;">
             <button class="btn-send" style="width:100%" onclick="registerUser()">DÉMARRER</button>
         </div>
     </div>
 
     <script>
-        // Configuration Base de Données
         const SB_URL = "https://pxyrfrgwvmyflrunpvhl.supabase.co";
         const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4eXJmcmd3dm15ZmxydW5wdmhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjg0NDcsImV4cCI6MjA5MTg0NDQ0N30.K6cs-mSRFmQg9gPzjU-GSarMDgAv2AbvBKJj4Nb8plI";
         const client = window.supabase.createClient(SB_URL, SB_KEY);
-        
-        // Son de notification
         const notifySound = new Audio('https://raw.githubusercontent.com/rafaelreis-hotmart/Audio-Notification/master/notification.mp3');
 
-        // État de l'utilisateur
         let user = {
             name: localStorage.getItem('u_2026') || null,
             theme: localStorage.getItem('t_2026') || "theme-blue",
             pfp: localStorage.getItem('p_2026') || "https://cdn-icons-png.flaticon.com/512/149/149071.png"
         };
 
-        // Initialisation de l'application
-        if (!user.name) {
-            document.getElementById('login-modal').style.display = 'flex';
-        } else {
-            document.body.className = user.theme;
-            load();
-        }
+        if (!user.name) document.getElementById('login-modal').style.display = 'flex';
+        else { document.body.className = user.theme; load(); }
 
-        // --- Fonctions Paramètres ---
         function openSettings() { 
             document.getElementById('new-name').value = user.name;
             document.getElementById('pfp-edit').src = user.pfp;
             document.getElementById('modal').style.display = 'flex'; 
         }
-        
-        function closeSettings() { 
-            document.getElementById('modal').style.display = 'none'; 
-        }
+        function closeSettings() { document.getElementById('modal').style.display = 'none'; }
 
         function previewPFP(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = (e) => {
                     document.getElementById('pfp-edit').src = e.target.result;
                     document.getElementById('pfp-reg').src = e.target.result;
                     user.pfp = e.target.result;
-                }
+                };
                 reader.readAsDataURL(input.files[0]);
             }
         }
 
         async function registerUser() {
-            const nameInput = document.getElementById('reg-name');
-            const name = nameInput.value.trim();
+            const name = document.getElementById('reg-name').value.trim();
             if(!name) return;
-            
-            // Vérifier si le pseudo existe déjà
-            const { data } = await client.from('messages').select('username').eq('username', name).limit(1);
-            if(data && data.length > 0) {
-                document.getElementById('reg-error').style.display = 'block';
-                return;
-            }
-
             user.name = name;
             localStorage.setItem('u_2026', name);
             localStorage.setItem('p_2026', user.pfp);
             document.getElementById('login-modal').style.display = 'none';
-            document.body.className = user.theme;
             load();
         }
         
         function saveSettings() {
             user.name = document.getElementById('new-name').value || user.name;
             user.theme = document.getElementById('theme-select').value;
-            
             localStorage.setItem('u_2026', user.name);
             localStorage.setItem('t_2026', user.theme);
             localStorage.setItem('p_2026', user.pfp);
-            
             document.body.className = user.theme;
             closeSettings();
         }
 
-        // --- Fonctions Chat ---
         function uploadFile() {
             const file = document.getElementById('file-input').files[0];
             if (file) {
@@ -397,107 +196,55 @@
             }
         }
 
-        async function sendMsg() {
+        // --- ENVOI INSTANTANÉ (0 SECONDE) ---
+        function sendMsg() {
             const input = document.getElementById('user-input');
             const val = input.value.trim();
             if(!val) return;
-            input.value = "";
+            input.value = ""; // Vide le champ tout de suite
 
-            const cmd = val.toLowerCase();
-            
-            // Commande de suppression
-            if(cmd === "/supprime" || cmd === "/supprimé") {
-                if(confirm("🚨 Purger tout l'historique ?")) {
-                    const { error } = await client.from('messages').delete().not('id', 'is', null);
-                    if(!error) document.getElementById('chat-scroller').innerHTML = "";
-                }
+            if(val.toLowerCase().startsWith("/news ")) {
+                document.getElementById('news-bar').innerHTML = `<span class="news-label">ALERTE</span> ${val.substring(6).toUpperCase()} — `;
                 return;
             }
 
-            // Commande News
-            if(cmd.startsWith("/news ")) {
-                const txt = val.replace("/news ", "").toUpperCase();
-                document.getElementById('news-bar').innerHTML = `<span class="news-label">ALERTE</span> ${txt} — `;
-                return;
-            }
-
-            // Envoi normal
-            await client.from('messages').insert([{ 
+            const newMsg = { 
                 username: user.name, 
                 content: val, 
                 user_color: "var(--neon-blue)",
                 avatar_url: user.pfp 
-            }]);
+            };
+
+            render(newMsg, true); // Affichage immédiat local
+            client.from('messages').insert([newMsg]).then(); // Envoi silencieux
         }
 
-        function render(m) {
+        function render(m, local = false) {
+            if (!local && m.username === user.name) return; // Évite les doublons
             const chat = document.getElementById('chat-scroller');
             const div = document.createElement('div');
-            const isMe = m.username === user.name;
-            div.className = `message ${isMe ? 'me' : ''}`;
+            div.className = `message ${m.username === user.name ? 'me' : ''}`;
             
             let content = m.content;
-
-            // Détection Images/Liens
-            if(content.startsWith('http')) {
-                content = `<img src="${content}" class="chat-image">`;
-            } 
-            // Détection Fichiers (Visuel Amélioré)
+            if(content.startsWith('http')) content = `<img src="${content}" class="chat-image">`;
             else if(content.startsWith('[FICHIER]')) {
-                const fName = content.replace('[FICHIER] ', '');
-                content = `
-                    <div style="border:1px dashed var(--neon-blue); padding:10px; border-radius:10px; display:flex; align-items:center; background:rgba(255,255,255,0.05);">
-                        <span style="font-size:20px; margin-right:10px;">📄</span>
-                        <div>
-                            <strong>${fName}</strong><br>
-                            <small style="color:var(--neon-blue)">Fichier Reçu</small>
-                        </div>
-                    </div>`;
+                content = `<div style="border:1px dashed var(--neon-blue); padding:10px; border-radius:10px; display:flex; align-items:center; background:rgba(255,255,255,0.05);"><span style="font-size:20px; margin-right:10px;">📄</span><div><strong>${content.replace('[FICHIER] ', '')}</strong><br><small style="color:var(--neon-blue)">Transmis</small></div></div>`;
             }
             
-            const av = m.avatar_url || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-            
-            div.innerHTML = `
-                <img src="${av}" class="avatar">
-                <div>
-                    <b style="color:${m.user_color}">${m.username}</b><br>
-                    ${content}
-                </div>`;
-                
+            div.innerHTML = `<img src="${m.avatar_url}" class="avatar"><div><b style="color:${m.user_color}">${m.username}</b><br>${content}</div>`;
             chat.appendChild(div);
             chat.scrollTop = chat.scrollHeight;
-            
-            if(!isMe) {
-                notifySound.play().catch(() => {});
-            }
+            if(!local) notifySound.play().catch(()=>{});
         }
 
         async function load() {
-            // Chargement initial
-            const { data } = await client
-                .from('messages')
-                .select('*')
-                .order('created_at', {ascending: true})
-                .limit(50);
-                
-            if(data) {
-                data.forEach(render);
-            }
-
-            // Écoute en temps réel
-            client
-                .channel('room1')
-                .on('postgres_changes', { event:'INSERT', schema:'public', table:'messages' }, payload => {
-                    render(payload.new);
-                })
-                .subscribe();
+            const { data } = await client.from('messages').select('*').order('created_at', {ascending: true}).limit(50);
+            if(data) { document.getElementById('chat-scroller').innerHTML = ""; data.forEach(m => render(m)); }
+            client.channel('room1').on('postgres_changes', { event:'INSERT', schema:'public', table:'messages' }, p => render(p.new)).subscribe();
         }
 
-        // Événements boutons
         document.getElementById('send-btn').onclick = sendMsg;
-        document.getElementById('user-input').onkeydown = (e) => { 
-            if(e.key === 'Enter') sendMsg(); 
-        };
+        document.getElementById('user-input').onkeydown = (e) => { if(e.key === 'Enter') sendMsg(); };
     </script>
 </body>
 </html>
