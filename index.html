@@ -1,250 +1,422 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
     <meta name="mobile-web-app-capable" content="yes"> 
     <meta name="apple-mobile-web-app-capable" content="yes"> 
     <meta name="apple-mobile-web-app-title" content="LANOU-CORD">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#00f2ff">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LANOU-CORD 2026 | News Edition</title>
+
+    <title>LANOU-CORD | CORE 2026</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
+
     <style>
+        /* SECTION 1 : DESIGN SYSTEM & VARIABLES
+           On définit ici toutes les couleurs et les styles de base.
+        */
         :root {
             --neon-blue: #00f2ff;
-            --glass-bg: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 255, 255, 0.2);
-            --bg-gradient: radial-gradient(circle at center, #001a33 0%, #00050a 100%);
+            --neon-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
+            --bg-dark: #00050a;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --font-main: 'Segoe UI', Roboto, sans-serif;
         }
 
-        body.theme-blue { --neon-blue: #00f2ff; --bg-gradient: radial-gradient(circle at center, #001a33 0%, #00050a 100%); }
-        body.theme-green { --neon-blue: #00ff88; --bg-gradient: radial-gradient(circle at center, #001a0a 0%, #00050a 100%); }
-        body.theme-red { --neon-blue: #ff0055; --bg-gradient: radial-gradient(circle at center, #1a0005 0%, #00050a 100%); }
+        /* SECTION 2 : THÈMES DYNAMIQUES
+           Changement de couleur en temps réel via JS.
+        */
+        body.theme-blue { 
+            --neon-blue: #00f2ff; 
+            --bg-grad: radial-gradient(circle at center, #001a33 0%, #00050a 100%); 
+        }
+        body.theme-green { 
+            --neon-blue: #00ff88; 
+            --bg-grad: radial-gradient(circle at center, #001a0a 0%, #00050a 100%); 
+        }
+        body.theme-red { 
+            --neon-blue: #ff0055; 
+            --bg-grad: radial-gradient(circle at center, #1a0005 0%, #00050a 100%); 
+        }
 
+        /* RESET & STRUCTURE */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body {
-            margin: 0; padding: 0; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg-gradient); 
-            color: white; 
+            font-family: var(--font-main);
+            background: var(--bg-grad);
+            color: #fff;
             height: 100vh;
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            overflow: hidden; 
-            transition: 0.5s;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: background 0.5s ease;
         }
 
+        /* HEADER & LOGO */
         header {
-            width: 100%; height: 50px; 
-            background: rgba(0, 0, 0, 0.5); 
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--neon-blue); 
-            display: flex; align-items: center; justify-content: space-between; padding: 0 20px; box-sizing: border-box;
-            box-shadow: 0 0 15px rgba(0, 242, 255, 0.3); z-index: 10;
+            height: 60px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(15px);
+            border-bottom: 2px solid var(--neon-blue);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+            z-index: 100;
         }
 
-        .logo { font-weight: 900; font-size: 20px; letter-spacing: 2px; color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); }
+        .logo {
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: 3px;
+            color: var(--neon-blue);
+            text-shadow: var(--neon-shadow);
+        }
 
-        .news-container { width: 100%; background: rgba(0, 0, 0, 0.4); border-bottom: 1px solid var(--glass-border); overflow: hidden; white-space: nowrap; padding: 6px 0; }
-        .news-track { display: inline-block; padding-left: 100%; animation: marquee 25s linear infinite; color: var(--neon-blue); font-size: 11px; font-weight: bold; letter-spacing: 1px; }
-        @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
-        .news-label { background: var(--neon-blue); color: #000; padding: 2px 6px; border-radius: 3px; margin-right: 10px; }
+        /* NEWS TICKER (BANDEAU DÉFILANT) */
+        .ticker-zone {
+            width: 100%;
+            height: 35px;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid var(--glass-border);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
 
-        .app-container { margin-top: 20px; width: 850px; height: 500px; background: var(--glass-bg); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
-        .main-layout { display: flex; flex: 1; overflow: hidden; }
+        .ticker-text {
+            white-space: nowrap;
+            padding-left: 100%;
+            animation: move-ticker 30s linear infinite;
+            color: var(--neon-blue);
+            font-size: 12px;
+            font-weight: bold;
+        }
 
-        aside { width: 200px; background: rgba(0, 0, 0, 0.2); border-right: 1px solid var(--glass-border); padding: 20px; }
-        .contact-card { background: rgba(255, 255, 255, 0.05); padding: 10px; border-radius: 12px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
-        .status { width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 5px currentColor; }
+        @keyframes move-ticker {
+            from { transform: translateX(0); }
+            to { transform: translateX(-100%); }
+        }
 
-        #chat-scroller { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-        .message { max-width: 75%; padding: 12px 16px; border-radius: 15px; font-size: 14px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); display: flex; gap: 10px; }
-        .message.me { align-self: flex-end; border-color: var(--neon-blue); background: rgba(0, 242, 255, 0.08); flex-direction: row-reverse; }
+        .badge {
+            background: var(--neon-blue);
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-right: 15px;
+        }
 
-        .avatar { width: 35px; height: 35px; border-radius: 50%; border: 1px solid var(--neon-blue); object-fit: cover; background: #222; }
-        .chat-image { max-width: 100%; border-radius: 10px; margin-top: 8px; border: 1px solid var(--neon-blue); }
+        /* MISE EN PAGE PRINCIPALE */
+        .app-body {
+            flex: 1;
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+            overflow: hidden;
+        }
 
-        .input-bar { padding: 20px; background: rgba(0,0,0,0.3); display: flex; gap: 10px; }
-        input, select { flex: 1; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); border-radius: 10px; padding: 12px; color: white; outline: none; }
-        .btn-send { background: var(--neon-blue); border: none; border-radius: 10px; padding: 0 20px; font-weight: bold; cursor: pointer; color: #000; }
+        .sidebar {
+            width: 250px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
 
-        #modal, #login-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: #001a33; border: 1px solid var(--neon-blue); padding: 30px; border-radius: 20px; width: 320px; text-align: center; }
-        .pfp-preview { width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--neon-blue); margin: 10px auto; cursor: pointer; object-fit: cover; }
+        .chat-area {
+            flex: 1;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        #scroller {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* MESSAGES */
+        .msg {
+            max-width: 75%;
+            display: flex;
+            gap: 12px;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .msg.me {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--neon-blue);
+            object-fit: cover;
+        }
+
+        .bubble {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 18px;
+            border-radius: 18px;
+            border: 1px solid var(--glass-border);
+            position: relative;
+        }
+
+        .me .bubble {
+            background: rgba(0, 242, 255, 0.1);
+            border-color: var(--neon-blue);
+        }
+
+        /* INPUT BAR */
+        .input-dock {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            gap: 12px;
+        }
+
+        .field {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 12px 15px;
+            color: #fff;
+            outline: none;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-send { background: var(--neon-blue); color: #000; }
+        .btn-send:hover { box-shadow: var(--neon-shadow); }
+
+        /* MODALS */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #001a33;
+            border: 2px solid var(--neon-blue);
+            padding: 40px;
+            border-radius: 25px;
+            text-align: center;
+            width: 350px;
+        }
     </style>
 </head>
+
 <body class="theme-blue">
 
     <header>
         <div class="logo">LANOU-CORD 2026</div>
-        <button class="btn-send" style="height: 30px; padding: 0 10px;" onclick="openSettings()">PROPRIÉTÉS</button>
+        <button class="btn btn-send" onclick="toggleModal('settings-modal', true)">CONFIG</button>
     </header>
 
-    <div class="news-container">
-        <div class="news-track" id="news-bar">
-            <span class="news-label">NOUVEAUTÉS</span> [UPDATE 1.2] : SYSTÈME D'AVATARS OPÉRATIONNEL — [CLOAD] : TRANSFERT DE FICHIERS (📎) — [VITESSE] : ENVOI INSTANTANÉ ACTIVÉ —
+    <div class="ticker-zone">
+        <div class="ticker-text" id="news-bar">
+            <span class="badge">LIVE</span> BIENVENUE SUR LANOU-CORD — SYSTÈME DE SAUVEGARDE ACTIVE — VITESSE OPTIMISÉE — COMMANDE /NEWS DISPONIBLE —
         </div>
     </div>
 
-    <div class="app-container">
-        <div class="main-layout">
-            <aside>
-                <h3 style="font-size: 11px; color: var(--neon-blue); margin-bottom: 15px;">CHANNELS</h3>
-                <div class="contact-card"><div class="status" style="color: #00ff88;"></div><span>LANOU</span></div>
-                <div class="contact-card"><div class="status" style="color: var(--neon-blue);"></div><span>Gemini AI</span></div>
-            </aside>
-            <main style="flex:1; display:flex; flex-direction:column;">
-                <div id="chat-scroller"></div>
-                <div class="input-bar">
-                    <input type="file" id="file-input" style="display:none" onchange="uploadFile()">
-                    <button class="btn-send" onclick="document.getElementById('file-input').click()">📎</button>
-                    <input type="text" id="user-input" placeholder="Transmission instantanée...">
-                    <button class="btn-send" id="send-btn">ENVOYER</button>
-                </div>
-            </main>
-        </div>
+    <div class="app-body">
+        <aside class="sidebar">
+            <h4 style="color:var(--neon-blue); font-size:11px; margin-bottom:20px;">CHANNELS</h4>
+            <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; margin-bottom:10px;"># GÉNÉRAL</div>
+            <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; opacity:0.5;"># ARCHIVES</div>
+        </aside>
+
+        <main class="chat-area">
+            <div id="scroller"></div>
+            <div class="input-dock">
+                <input type="file" id="file-up" style="display:none" onchange="upload()">
+                <button class="btn" style="background:#333; color:#fff" onclick="document.getElementById('file-up').click()">📎</button>
+                <input type="text" id="msg-input" class="field" placeholder="Tapez ici...">
+                <button class="btn btn-send" id="send-btn">ENVOYER</button>
+            </div>
+        </main>
     </div>
 
-    <div id="modal">
+    <div id="login-modal" class="modal" style="display:flex">
         <div class="modal-content">
-            <h3 style="color: var(--neon-blue);">PARAMÈTRES</h3>
-            <img id="pfp-edit" src="" class="pfp-preview" onclick="document.getElementById('pfp-input').click()">
-            <input type="file" id="pfp-input" style="display:none" accept="image/*" onchange="previewPFP(this)">
-            <input type="text" id="new-name" placeholder="Pseudo" style="width: 90%; margin-bottom: 10px;">
-            <select id="theme-select" style="width: 90%; margin-bottom: 20px;">
-                <option value="theme-blue">Néon Blue</option>
-                <option value="theme-green">Emerald Green</option>
-                <option value="theme-red">Crimson Red</option>
+            <h2 style="color:var(--neon-blue); margin-bottom:20px;">CONNEXION</h2>
+            <img id="reg-pfp-view" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width:80px; height:80px; border-radius:50%; border:2px solid var(--neon-blue); margin-bottom:20px; cursor:pointer;" onclick="document.getElementById('reg-pfp-input').click()">
+            <input type="file" id="reg-pfp-input" style="display:none" accept="image/*" onchange="preview(this, 'reg-pfp-view')">
+            <input type="text" id="reg-name" class="field" style="width:100%; margin-bottom:20px;" placeholder="Votre Pseudo">
+            <button class="btn btn-send" style="width:100%" onclick="login()">ENTRER</button>
+        </div>
+    </div>
+
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <h2 style="color:var(--neon-blue); margin-bottom:20px;">SETTINGS</h2>
+            <select id="theme-pick" class="field" style="width:100%; margin-bottom:20px;">
+                <option value="theme-blue">Blue Neon</option>
+                <option value="theme-green">Green Toxic</option>
+                <option value="theme-red">Red Fatal</option>
             </select>
-            <div style="display:flex; gap:10px;"><button class="btn-send" style="flex:1" onclick="saveSettings()">OK</button><button class="btn-send" style="flex:1; background:#444; color:white;" onclick="closeSettings()">FERMER</button></div>
-        </div>
-    </div>
-
-    <div id="login-modal">
-        <div class="modal-content">
-            <h3 style="color: var(--neon-blue);">CRÉATION PROFIL</h3>
-            <img id="pfp-reg" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="pfp-preview" onclick="document.getElementById('pfp-reg-input').click()">
-            <input type="file" id="pfp-reg-input" style="display:none" accept="image/*" onchange="previewPFP(this)">
-            <input type="text" id="reg-name" placeholder="Pseudo unique..." style="width: 90%; margin-bottom: 10px;">
-            <button class="btn-send" style="width:100%" onclick="registerUser()">DÉMARRER</button>
+            <button class="btn btn-send" style="width:100%" onclick="save()">APPLIQUER</button>
+            <button class="btn" style="width:100%; margin-top:10px; background:#444; color:#fff" onclick="toggleModal('settings-modal', false)">FERMER</button>
         </div>
     </div>
 
     <script>
+        /* SECTION 3 : LOGIQUE DU SYSTÈME (JAVASCRIPT)
+           Ici, on gère la mémoire, l'envoi et la vitesse.
+        */
+
         const SB_URL = "https://pxyrfrgwvmyflrunpvhl.supabase.co";
         const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4eXJmcmd3dm15ZmxydW5wdmhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNjg0NDcsImV4cCI6MjA5MTg0NDQ0N30.K6cs-mSRFmQg9gPzjU-GSarMDgAv2AbvBKJj4Nb8plI";
         const client = window.supabase.createClient(SB_URL, SB_KEY);
-        const notifySound = new Audio('https://raw.githubusercontent.com/rafaelreis-hotmart/Audio-Notification/master/notification.mp3');
 
-        let user = {
-            name: localStorage.getItem('u_2026') || null,
-            theme: localStorage.getItem('t_2026') || "theme-blue",
-            pfp: localStorage.getItem('p_2026') || "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+        let me = {
+            name: localStorage.getItem('u_name') || null,
+            pfp: localStorage.getItem('u_pfp') || "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+            theme: localStorage.getItem('u_theme') || "theme-blue"
         };
 
-        if (!user.name) document.getElementById('login-modal').style.display = 'flex';
-        else { document.body.className = user.theme; load(); }
+        const sound = new Audio('https://raw.githubusercontent.com/rafaelreis-hotmart/Audio-Notification/master/notification.mp3');
 
-        function openSettings() { 
-            document.getElementById('new-name').value = user.name;
-            document.getElementById('pfp-edit').src = user.pfp;
-            document.getElementById('modal').style.display = 'flex'; 
-        }
-        function closeSettings() { document.getElementById('modal').style.display = 'none'; }
-
-        function previewPFP(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    document.getElementById('pfp-edit').src = e.target.result;
-                    document.getElementById('pfp-reg').src = e.target.result;
-                    user.pfp = e.target.result;
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        async function registerUser() {
-            const name = document.getElementById('reg-name').value.trim();
-            if(!name) return;
-            user.name = name;
-            localStorage.setItem('u_2026', name);
-            localStorage.setItem('p_2026', user.pfp);
+        // INITIALISATION
+        if (me.name) {
             document.getElementById('login-modal').style.display = 'none';
-            load();
-        }
-        
-        function saveSettings() {
-            user.name = document.getElementById('new-name').value || user.name;
-            user.theme = document.getElementById('theme-select').value;
-            localStorage.setItem('u_2026', user.name);
-            localStorage.setItem('t_2026', user.theme);
-            localStorage.setItem('p_2026', user.pfp);
-            document.body.className = user.theme;
-            closeSettings();
+            document.body.className = me.theme;
+            start();
         }
 
-        function uploadFile() {
-            const file = document.getElementById('file-input').files[0];
-            if (file) {
-                document.getElementById('user-input').value = `[FICHIER] ${file.name}`;
-                sendMsg();
+        function toggleModal(id, open) {
+            document.getElementById(id).style.display = open ? 'flex' : 'none';
+        }
+
+        function preview(input, id) {
+            if (input.files && input.files[0]) {
+                const r = new FileReader();
+                r.onload = e => {
+                    document.getElementById(id).src = e.target.result;
+                    me.pfp = e.target.result;
+                };
+                r.readAsDataURL(input.files[0]);
             }
         }
 
-        // --- ENVOI INSTANTANÉ (0 SECONDE) ---
-        function sendMsg() {
-            const input = document.getElementById('user-input');
-            const val = input.value.trim();
+        async function login() {
+            const n = document.getElementById('reg-name').value.trim();
+            if(!n) return;
+            me.name = n;
+            localStorage.setItem('u_name', n);
+            localStorage.setItem('u_pfp', me.pfp);
+            document.getElementById('login-modal').style.display = 'none';
+            start();
+        }
+
+        function save() {
+            me.theme = document.getElementById('theme-pick').value;
+            localStorage.setItem('u_theme', me.theme);
+            document.body.className = me.theme;
+            toggleModal('settings-modal', false);
+        }
+
+        // CHAT ENGINE
+        async function start() {
+            // CHARGER L'HISTORIQUE (POUR NE RIEN PERDRE AU REFRESH)
+            const { data } = await client.from('messages').select('*').order('created_at', {ascending: true}).limit(50);
+            if(data) {
+                document.getElementById('scroller').innerHTML = "";
+                data.forEach(m => render(m));
+            }
+
+            // ECOUTER EN TEMPS RÉEL
+            client.channel('any').on('postgres_changes', { event:'INSERT', schema:'public', table:'messages' }, p => {
+                if(p.new.username !== me.name) render(p.new, false);
+            }).subscribe();
+        }
+
+        function send() {
+            const i = document.getElementById('msg-input');
+            const val = i.value.trim();
             if(!val) return;
-            input.value = ""; // Vide le champ tout de suite
 
-            if(val.toLowerCase().startsWith("/news ")) {
-                document.getElementById('news-bar').innerHTML = `<span class="news-label">ALERTE</span> ${val.substring(6).toUpperCase()} — `;
-                return;
+            // COMMANDES
+            if(val.toLowerCase().startsWith('/news ')) {
+                document.getElementById('news-bar').innerHTML = `<span class="badge">INFO</span> ${val.substring(6).toUpperCase()} — `;
+                i.value = ""; return;
             }
 
-            const newMsg = { 
-                username: user.name, 
-                content: val, 
-                user_color: "var(--neon-blue)",
-                avatar_url: user.pfp 
+            const msg = {
+                username: me.name,
+                content: val,
+                avatar_url: me.pfp,
+                user_color: "var(--neon-blue)"
             };
 
-            render(newMsg, true); // Affichage immédiat local
-            client.from('messages').insert([newMsg]).then(); // Envoi silencieux
+            render(msg, true); // VITESSE INSTANTANÉE (Local)
+            i.value = "";
+            client.from('messages').insert([msg]).then(); // SAUVEGARDE CLOUD
         }
 
-        function render(m, local = false) {
-            if (!local && m.username === user.name) return; // Évite les doublons
-            const chat = document.getElementById('chat-scroller');
-            const div = document.createElement('div');
-            div.className = `message ${m.username === user.name ? 'me' : ''}`;
+        function render(m, isMeLocal) {
+            const sc = document.getElementById('scroller');
+            const d = document.createElement('div');
+            const isMe = m.username === me.name;
+            d.className = `msg ${isMe ? 'me' : ''}`;
             
-            let content = m.content;
-            if(content.startsWith('http')) content = `<img src="${content}" class="chat-image">`;
-            else if(content.startsWith('[FICHIER]')) {
-                content = `<div style="border:1px dashed var(--neon-blue); padding:10px; border-radius:10px; display:flex; align-items:center; background:rgba(255,255,255,0.05);"><span style="font-size:20px; margin-right:10px;">📄</span><div><strong>${content.replace('[FICHIER] ', '')}</strong><br><small style="color:var(--neon-blue)">Transmis</small></div></div>`;
+            d.innerHTML = `
+                <img src="${m.avatar_url}" class="avatar">
+                <div class="bubble">
+                    <b style="font-size:10px; display:block; color:var(--neon-blue)">${m.username}</b>
+                    ${m.content}
+                </div>
+            `;
+            sc.appendChild(d);
+            sc.scrollTop = sc.scrollHeight;
+            if(!isMeLocal && !isMe) sound.play().catch(()=>{});
+        }
+
+        function upload() {
+            const f = document.getElementById('file-up').files[0];
+            if(f) {
+                document.getElementById('msg-input').value = `[FICHIER] ${f.name}`;
+                send();
             }
-            
-            div.innerHTML = `<img src="${m.avatar_url}" class="avatar"><div><b style="color:${m.user_color}">${m.username}</b><br>${content}</div>`;
-            chat.appendChild(div);
-            chat.scrollTop = chat.scrollHeight;
-            if(!local) notifySound.play().catch(()=>{});
         }
 
-        async function load() {
-            const { data } = await client.from('messages').select('*').order('created_at', {ascending: true}).limit(50);
-            if(data) { document.getElementById('chat-scroller').innerHTML = ""; data.forEach(m => render(m)); }
-            client.channel('room1').on('postgres_changes', { event:'INSERT', schema:'public', table:'messages' }, p => render(p.new)).subscribe();
-        }
+        document.getElementById('send-btn').onclick = send;
+        document.getElementById('msg-input').onkeydown = e => { if(e.key === 'Enter') send(); };
 
-        document.getElementById('send-btn').onclick = sendMsg;
-        document.getElementById('user-input').onkeydown = (e) => { if(e.key === 'Enter') sendMsg(); };
     </script>
 </body>
 </html>
